@@ -1,7 +1,7 @@
 # 3D_platform
 3D platform parkour
 
-TODO:
+**TODO**:
 1. Create Camera inside an invisible cube
 2. Create a big plane
 3. Create Gravity
