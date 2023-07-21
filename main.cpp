@@ -1,33 +1,23 @@
 #include <iostream>
 #include <cstdlib>
 #include <cctype>
-#include <GL/freeglut.h>
+#include <GL/glut.h>
 
-constexpr bool LOGGING_ENABLED = true;
+#include "Cuboid.h"
+#include "logging.h"
 
 
-static inline void logMessage(const char* format...) 
-{
-	if constexpr (LOGGING_ENABLED)
-	{
-		static char LOG_BUFFER[BUFSIZ];
-		static std::ostream& logger = std::cout;
-
-		va_list args;
-		va_start(args, format);
-
-		std::vsnprintf(LOG_BUFFER, BUFSIZ, format, args);
-
-		va_end(args);
-
-		logger << LOG_BUFFER;
-	}
-}
+Cuboid ground(100.0f, 0.1f, 100.0f);
 
 
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	ground
+		.color(0.0f, 1.0f, 0.0f)
+		.spawnAt(0.0f, 0.0f, 0.0f);
+
 	glutSwapBuffers();
 }
 
