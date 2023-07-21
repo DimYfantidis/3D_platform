@@ -1,7 +1,28 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
+#include <iostream>
+#include <cstdlib>
+#include <cctype>
 #include <GL/freeglut.h>
+
+constexpr bool LOGGING_ENABLED = true;
+
+
+static inline void logMessage(const char* format...) 
+{
+	if constexpr (LOGGING_ENABLED)
+	{
+		static char LOG_BUFFER[BUFSIZ];
+		static std::ostream& logger = std::cout;
+
+		va_list args;
+		va_start(args, format);
+
+		std::vsnprintf(LOG_BUFFER, BUFSIZ, format, args);
+
+		va_end(args);
+
+		logger << LOG_BUFFER;
+	}
+}
 
 
 void display(void)
@@ -12,12 +33,20 @@ void display(void)
 
 void keyboard(unsigned char key, int x, int y)
 {
-	switch (tolower(key))
-	{
+	switch (tolower(key)) {
 	case 'w':
-		printf("Forward Movement");
+		logMessage("Forward movement\n");
+		break;
+	case 'a':
+		logMessage("Left movement\n");
+		break;
+	case 's':
+		logMessage("Backwards movement\n");
+		break;
+	case 'd':
+		logMessage("Right movement\n");
+		break;
 	}
-
 }
 
 int main(int argc, char* argv[])
@@ -48,7 +77,7 @@ int main(int argc, char* argv[])
 	glutSpecialFunc(NULL);
 	glutDisplayFunc(display);
 	glutIdleFunc(NULL);
-	glutKeyboardFunc(NULL);
+	glutKeyboardFunc(keyboard);
 
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
