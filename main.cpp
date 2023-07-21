@@ -1,10 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <GL/freeglut.h>
 
 
 void display(void)
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glutSwapBuffers();
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+	switch (tolower(key))
+	{
+	case 'w':
+		printf("Forward Movement");
+	}
 
 }
 
@@ -40,8 +52,6 @@ int main(int argc, char* argv[])
 
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
-	printf("Press 'S' to toggle projection shadows\n");
-	printf("Press 'F' to toggle sun movement\n");
 
 	glutMainLoop();
 
