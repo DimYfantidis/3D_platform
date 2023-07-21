@@ -38,7 +38,6 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -65,6 +64,10 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
+template <typename T> int sgn(T val) {
+	return (T(0) < val) - (val < T(0));
+}
+
 void passiveMotion(int x, int y)
 {
 	constexpr static double step = 0.001745;
@@ -74,11 +77,10 @@ void passiveMotion(int x, int y)
 	int x_prev = windowCenter[0];
 	int y_prev = windowCenter[1];
 
-	int dx = x - x_prev;
-	int dy = y - y_prev;
+	int dx = x_prev - x;
+	int dy = y_prev - y;
 
-	horizontal_angle += -dx * step;
-	vertical_angle += dy * step;
+	horizontal_angle += dx * step;
 	
 	if (horizontal_angle < -M_PI) {
 		horizontal_angle += 2 * M_PI;
@@ -86,12 +88,13 @@ void passiveMotion(int x, int y)
 	else if (horizontal_angle > M_PI) {
 		horizontal_angle -= 2 * M_PI;
 	}
-	if (vertical_angle < -M_PI) {
-		vertical_angle += 2 * M_PI;
+	if (sgn(dy) != sgn(vertical_angle) || abs(vertical_angle) < M_PI_2) {
+		vertical_angle += dy * step;
 	}
-	else if (vertical_angle > M_PI) {
-		vertical_angle -= 2 * M_PI;
+	if (abs(vertical_angle) > M_PI_2) {
+		vertical_angle = sgn(vertical_angle) * M_PI_2;
 	}
+
 	cam_dir[0] = cos(vertical_angle) * sin(horizontal_angle);
 	cam_dir[1] = sin(vertical_angle);
 	cam_dir[2] = cos(vertical_angle) * cos(horizontal_angle);
@@ -127,6 +130,7 @@ int main(int argc, char* argv[])
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	glutSetCursor(GLUT_CURSOR_NONE);
 
 	glutSpecialFunc(NULL);
 	glutDisplayFunc(display);
