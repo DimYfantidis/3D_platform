@@ -20,11 +20,17 @@ public:
 	void spawnAt(float x, float y, float z) 
 	{
 		glPushMatrix();
-		glColor3fv(m_color);
 
-		logMessage("Spawning cuboid\n> pos={%.3f, %.3f, %.3f}\n> dim={%.3f, %.3f, %.3f}\n> color={%.3f, %.3f, %.3f}\n", 
-			x, y, z, m_width, m_height, m_depth, m_color[0], m_color[1], m_color[2]
+		logMessage("Spawning cuboid\n"
+			"> pos={%.3f, %.3f, %.3f}\n"
+			"> dim={%.3f, %.3f, %.3f}\n"
+			"> color={%.3f, %.3f, %.3f}\n", 
+			x, y, z, 
+			m_width, m_height, m_depth, 
+			m_color[0], m_color[1], m_color[2]
 		);
+
+		glColor3fv(m_color);
 
 		glBegin(GL_TRIANGLES);
 		{
@@ -96,7 +102,7 @@ public:
 	void spawnAt(float p[3]) {
 		this->spawnAt(p[0], p[1], p[2]);
 	}
-
+	
 	Cuboid& color(float red, float green, float blue) {
 		m_color[0] = red;
 		m_color[1] = green;
