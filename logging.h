@@ -4,7 +4,7 @@
 #include <cstdarg>
 
 
-constexpr bool LOGGING_ENABLED = true;
+constexpr bool LOGGING_ENABLED = false;
 
 inline void logMessage(const char* format...)
 {

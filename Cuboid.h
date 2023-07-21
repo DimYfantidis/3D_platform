@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 
 #include "logging.h"
+#include "typedefs.h"
 
 
 class Cuboid
@@ -99,7 +100,7 @@ public:
 		glPopMatrix();
 	}
 
-	void spawnAt(float p[3]) {
+	void spawnAt(vector3f p) {
 		this->spawnAt(p[0], p[1], p[2]);
 	}
 	
@@ -115,5 +116,5 @@ private:
 	float m_height;
 	float m_depth;
 
-	float m_color[3];
+	vector3f m_color;
 };
