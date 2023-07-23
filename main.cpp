@@ -119,24 +119,6 @@ void passiveMotion(int x, int y)
 	glutPostRedisplay();
 }
 
-static void print_bytes(const void* object, size_t size)
-{
-#ifdef __cplusplus
-	const unsigned char* const bytes = static_cast<const unsigned char*>(object);
-#else // __cplusplus
-	const unsigned char* const bytes = object;
-#endif // __cplusplus
-
-	size_t i;
-
-	printf("[ ");
-	for (i = 0; i < size; i++)
-	{
-		printf("%02x ", bytes[i]);
-	}
-	printf("]\n");
-}
-
 int main(int argc, char* argv[])
 {
 	// Window Creation
