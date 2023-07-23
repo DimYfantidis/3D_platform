@@ -27,8 +27,9 @@ namespace engine
 			this->m_color[2] = other.m_color[2];
 		}
 
+		// Spawns the object with its center at the given point
 		virtual void spawn(float x, float y, float z) {}
-		virtual void spawn(point3f p) { spawn(p[0], p[1], p[2]); }
+		void spawn(point3f p) { spawn(p[0], p[1], p[2]); }
 
 		shape& color(float red, float green, float blue) 
 		{

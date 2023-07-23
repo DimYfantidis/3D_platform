@@ -46,9 +46,11 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	point3f p = { -20.0f, 30.0f, 0.0f };
+
 	ground.color(0.0f, 1.0f, 0.0f).spawn(0.0f, 0.0f, 0.0f);
 	cuboid_object.color(0.0f, 0.0f, 1.0f).spawn(20.0f, 20.0f, 20.0f);
-	sphere_object.color(0.1254902f, 0.69803923f, 0.6666667f).spawn(-20.0f, 30.0f, 0.0f);
+	sphere_object.color(0.1254902f, 0.69803923f, 0.6666667f).spawn(p);
 
 	glutSwapBuffers();
 }
@@ -117,6 +119,24 @@ void passiveMotion(int x, int y)
 	glutPostRedisplay();
 }
 
+static void print_bytes(const void* object, size_t size)
+{
+#ifdef __cplusplus
+	const unsigned char* const bytes = static_cast<const unsigned char*>(object);
+#else // __cplusplus
+	const unsigned char* const bytes = object;
+#endif // __cplusplus
+
+	size_t i;
+
+	printf("[ ");
+	for (i = 0; i < size; i++)
+	{
+		printf("%02x ", bytes[i]);
+	}
+	printf("]\n");
+}
+
 int main(int argc, char* argv[])
 {
 	// Window Creation
@@ -152,7 +172,6 @@ int main(int argc, char* argv[])
 	glutPassiveMotionFunc(passiveMotion);
 
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
-
 
 	glutMainLoop();
 
