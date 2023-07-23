@@ -2,20 +2,25 @@
 
 #include <cmath>
 #include <cctype>
+#include <vector>
 #include <cstdlib>
 #include <iostream>
 #include <GL/glut.h>
 
-#include "Cuboid.h"
+#include "shapes.h"
 #include "logging.h"
 #include "typedefs.h"
 
 
-Cuboid ground(100.0f, 0.1f, 100.0f);
-
-int windowWidth = 800;
+int windowWidth = 600;
 int windowHeight = 600;
 int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
+
+double move_speed = 2.0;
+
+engine::rectangle ground(100.0f, 100.0f);
+engine::cuboid cuboid_object(8.0f, 8.0f, 8.0f);
+engine::sphere sphere_object(10.0f);
 
 vector3d cam_dir = { 0.0f, 0.0f, -1.0f };
 vector3d cam_pos = { 0.0f, 0.0f, 0.0f };
@@ -30,8 +35,8 @@ void display(void)
 	glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	gluLookAt(
-		cam_pos[0], cam_pos[1], cam_pos[2], 
-		cam_dir[0], cam_dir[1], cam_dir[2], 
+		0.0, 0.0, 0.0, 
+		cam_dir[0], cam_dir[1], cam_dir[2],
 		0.0, 1.0, 0.0
 	);
 
@@ -41,7 +46,9 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	ground.color(0.0f, 1.0f, 0.0f).spawnAt(0.0f, 0.0f, 0.0f);
+	ground.color(0.0f, 1.0f, 0.0f).spawn(0.0f, 0.0f, 0.0f);
+	cuboid_object.color(0.0f, 0.0f, 1.0f).spawn(20.0f, 20.0f, 20.0f);
+	sphere_object.color(0.1254902f, 0.69803923f, 0.6666667f).spawn(-20.0f, 30.0f, 0.0f);
 
 	glutSwapBuffers();
 }
@@ -50,12 +57,18 @@ void keyboard(unsigned char key, int x, int y)
 {
 	switch (tolower(key)) {
 	case 'w':
+		cam_pos[0] += cam_dir[0] * move_speed;
+		cam_pos[1] += cam_dir[1] * move_speed;
+		cam_pos[2] += cam_dir[2] * move_speed;
 		logMessage("Forward movement\n");
 		break;
 	case 'a':
 		logMessage("Left movement\n");
 		break;
 	case 's':
+		cam_pos[0] -= cam_dir[0] * move_speed;
+		cam_pos[1] -= cam_dir[1] * move_speed;
+		cam_pos[2] -= cam_dir[2] * move_speed;
 		logMessage("Backwards movement\n");
 		break;
 	case 'd':
