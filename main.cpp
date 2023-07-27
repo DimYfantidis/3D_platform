@@ -22,6 +22,7 @@ double move_speed = 2.0;
 engine::rectangle ground(100.0f, 100.0f);
 engine::cuboid cuboid_object(8.0f, 8.0f, 8.0f);
 engine::sphere sphere_object(10.0f);
+engine::light_source sun(GL_LIGHT0);
 
 vector3d cam_dir = { 0.0f, 0.0f, -1.0f };
 vector3d cam_pos = { 0.0f, 0.0f, 0.0f };
@@ -42,8 +43,8 @@ int main(int argc, char* argv[])
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black Background
-	//glEnable(GL_LIGHTING);					// Lighting
-	//glEnable(GL_LIGHT0);					// Light Source
+	glEnable(GL_LIGHTING);					// Lighting
+	glEnable(GL_LIGHT0);					// Light Source
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
@@ -54,6 +55,8 @@ int main(int argc, char* argv[])
 	create_window_menu();
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
+
+	std::cout << sizeof(engine::shape) << std::endl;
 
 	glutWarpPointer(windowWidth / 2, windowHeight / 2);
 	glutSetCursor(GLUT_CURSOR_NONE);

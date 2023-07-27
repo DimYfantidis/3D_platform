@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <iostream>
 #include <GL/glut.h>
 
@@ -13,23 +14,21 @@ namespace engine
 	class shape
 	{
 	public:
-		shape()
-		{
-			m_color[0] = 1.0f;
-			m_color[1] = 1.0f;
-			m_color[2] = 1.0f;
-		}
+		shape() 
+			: m_color(), m_ambient(), m_specular(), m_diffuse() 
+		{}
 
 		shape(const shape& other)
 		{
-			this->m_color[0] = other.m_color[0];
-			this->m_color[1] = other.m_color[1];
-			this->m_color[2] = other.m_color[2];
+			memmove(this->m_color, other.m_color, sizeof(vector3f));
+			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
+			memmove(this->m_specular, other.m_specular, sizeof(vector4f));
+			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
 		}
 
 		// Spawns the object with its center at the given point
 		virtual shape& spawn(float x, float y, float z) { return (*this); }
-		shape& spawn(point3f p) { return spawn(p[0], p[1], p[2]); }
+		shape& spawn(const point3f p) { return spawn(p[0], p[1], p[2]); }
 
 		shape& color(float red, float green, float blue) 
 		{
@@ -39,8 +38,45 @@ namespace engine
 			return (*this);
 		}
 
+		shape& colorv(const vector3f RGB)
+		{
+			m_color[0] = RGB[0];
+			m_color[1] = RGB[1];
+			m_color[2] = RGB[2];
+			return (*this);
+		}
+
+		shape& materialv(GLenum pname, const vector4f params) 
+		{
+			float* light_type;
+
+			if (pname == GL_AMBIENT)
+				light_type = m_ambient;
+			else if (pname == GL_SPECULAR)
+				light_type = m_specular;
+			else if (pname == GL_DIFFUSE)
+				light_type = m_diffuse;
+			else {
+				logMessage("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
+				return (*this);
+			}
+			memmove(light_type, params, sizeof(vector4f));
+			return (*this);
+		}
+
+		shape& materialv(GLenum pname, const std::array<float, 4>& params) {
+			return materialv(pname, params.data());
+		}
+
+		const float* ambient() { return m_ambient; }
+		const float* specular() { return m_specular; }
+		const float* diffuse() { return m_diffuse; }
+
 	protected:
 		vector3f m_color;
+		vector4f m_ambient;
+		vector4f m_specular;
+		vector4f m_diffuse;
 	};
 
 
@@ -72,9 +108,14 @@ namespace engine
 			);
 
 			glColor3fv(m_color);
+			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
 			glBegin(GL_TRIANGLES);
 			{
+				glNormal3f(0.0f, 1.0f, 0.0);
+
 				// 1
 				glVertex3f(x, y, z);
 				glVertex3f(x, y, z + m_depth);
@@ -203,6 +244,7 @@ namespace engine
 		float m_depth;
 	};
 
+	template <size_t REC_DEPTH = 4>
 	class sphere : public shape
 	{
 	public:
@@ -222,7 +264,7 @@ namespace engine
 			glTranslatef(x, y, z);
 			glScalef(m_radius, m_radius, m_radius);
 
-			tetrahedron(4);
+			tetrahedron(REC_DEPTH);
 
 			glPopMatrix();
 
@@ -235,7 +277,6 @@ namespace engine
 		{
 			vector3f cross;
 			point3f v1, v2, v3;
-
 			int j;
 
 			//Subdivide current triangle
@@ -244,10 +285,12 @@ namespace engine
 				// Subdivide the triangle into 2 equal parts
 				// v1,v2,v3 are the new points created by this subdivision which will form 4 new triangles
 				// Normalize these new points so that they move onto the unit sphere
-				for (j = 0; j < 3; j++) {
+				for (j = 0; j < 3; j++)
+				{
 					v1[j] = a[j] + b[j];
 				}
-				for (j = 0; j < 3; j++) {
+				for (j = 0; j < 3; j++)
+				{
 					v2[j] = a[j] + c[j];
 				}
 				for (j = 0; j < 3; j++) {
@@ -263,12 +306,17 @@ namespace engine
 				divide_triangle(b, v3, v1, m - 1);
 				divide_triangle(v1, v3, v2, m - 1);
 			}
+
 			//Draw final points as polygons onto the unit sphere
 			else
 			{
-				cross_product(cross, c, a, b);
+				cross_product(cross,
+					c[0], c[1], c[2],
+					a[0], a[1], a[2],
+					b[0], b[1], b[2]
+				);
 
-				glBegin(GL_TRIANGLES);
+				glBegin(GL_POLYGON);
 				{
 					glNormal3fv(cross);
 					glVertex3fv(a);
@@ -300,5 +348,63 @@ namespace engine
 
 	private:
 		float m_radius;
+	};
+
+	class light_source
+	{
+	public:
+		light_source(GLenum id, float radius = 1.0f) 
+			: m_light_id(id), m_emission(), m_cell(new sphere(radius))
+		{}
+
+		light_source(GLenum id, float width, float height, float depth)
+			: m_light_id(id), m_emission(), m_cell(new cuboid(width, height, depth))
+		{}
+
+		~light_source() {
+			delete m_cell;
+		}
+
+		light_source& emission(const vector4f params) {
+			memmove(m_emission, params, sizeof(vector3f));
+			return (*this);
+		}
+
+		light_source& emission(std::array<float, 4> params) {
+			return emission(params.data());
+		}
+
+		template <typename T>
+		light_source& materialv(GLenum pname, const T params) {
+			m_cell->materialv(pname, params);
+			return (*this);
+		}
+
+		light_source& spawn(float x, float y, float z) 
+		{
+			vector3f position = { x, y, z };
+
+			glPushMatrix();
+			{
+				//Create sun's materials for color and light
+				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_emission);
+				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0);
+
+				m_cell->spawn(x, y, z);
+
+				//Create light as a directional spotlight
+				glLightfv(m_light_id, GL_POSITION, position);
+				glLightfv(GL_LIGHT0, GL_DIFFUSE, m_cell->diffuse());
+				glLightfv(GL_LIGHT0, GL_SPECULAR, m_cell->specular());
+			}
+			glPopMatrix();
+			
+			return (*this);
+		}
+
+	private:
+		vector4f m_emission;
+		GLenum m_light_id;
+		shape* m_cell;
 	};
 }

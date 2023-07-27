@@ -17,19 +17,22 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	ground
-		.color(0.0f, 1.0f, 0.0f)
-		.spawn(0.0f, 0.0f, 0.0f);
 	cuboid_object
-		.color(0.0f, 0.0f, 1.0f)
+		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
+		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.spawn(20.0f, 20.0f, 20.0f)
 		.spawn(-20.0f, 20.0f, -20.0f);
+	ground
+		.materialv(GL_AMBIENT, { 0.3f, 1.0f, 0.3f, 0.0f })
+		.materialv(GL_SPECULAR, { 0.0f, 0.0f, 0.0f, 0.0f })
+		.materialv(GL_DIFFUSE, { 0.3f, 1.0f, 0.3f, 0.3f })
+		.spawn(0.0f, 0.0f, 0.0f);
+
 	sphere_object
-		.color(1.0f, 1.0f, 0.0f)
 		.spawn(-20.0f, 30.0f, 0.0f);
+	
+	sun.emission({ 0.2f, 0.2f, 0.0f, 1.0f }).spawn(10.0f, 10.0f, 10.0f);
 
 	glutSwapBuffers();
 }
