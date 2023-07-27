@@ -19,6 +19,11 @@ namespace engine
 		}
 	}
 
+	template <typename T> int sgn(T val) {
+		return (T(0) < val) - (val < T(0));
+	}
+
+
 	/*
 	*	Suppose three points p0, p1, p2.
 	*	The first parameter is assigned the cross product:
