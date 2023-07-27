@@ -114,14 +114,18 @@ namespace engine
 
 			glPushMatrix();
 
-			logMessage("Spawning rectangle\n"
-				"> pos={%.3f, %.3f, %.3f}\n"
-				"> dim={%.3f, %.3f, %.3f}\n"
-				"> color={%.3f, %.3f, %.3f}\n",
-				x, y, z,
-				m_width, 0.0f, m_depth,
-				m_color[0], m_color[1], m_color[2]
-			);
+
+			if constexpr (LOG_SHAPES) 
+			{
+				logMessage("Spawning rectangle\n"
+					"> pos={%.3f, %.3f, %.3f}\n"
+					"> dim={%.3f, %.3f, %.3f}\n"
+					"> color={%.3f, %.3f, %.3f}\n",
+					x, y, z,
+					m_width, 0.0f, m_depth,
+					m_color[0], m_color[1], m_color[2]
+				);
+			}
 
 			glColor3fv(m_color);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
@@ -176,16 +180,22 @@ namespace engine
 
 			glPushMatrix();
 
-			logMessage("Spawning cuboid\n"
-				"> pos={%.3f, %.3f, %.3f}\n"
-				"> dim={%.3f, %.3f, %.3f}\n"
-				"> color={%.3f, %.3f, %.3f}\n",
-				x, y, z,
-				m_width, m_height, m_depth,
-				m_color[0], m_color[1], m_color[2]
-			);
+			if constexpr (LOG_SHAPES)
+			{
+				logMessage("Spawning cuboid\n"
+					"> pos={%.3f, %.3f, %.3f}\n"
+					"> dim={%.3f, %.3f, %.3f}\n"
+					"> color={%.3f, %.3f, %.3f}\n",
+					x, y, z,
+					m_width, m_height, m_depth,
+					m_color[0], m_color[1], m_color[2]
+				);
+			}
 
 			glColor3fv(m_color);
+			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
 			// Consists of 6 rectangles(12 triangles).
 			glBegin(GL_TRIANGLES);
@@ -290,6 +300,10 @@ namespace engine
 			glPushMatrix();
 			{
 				glColor3fv(m_color);
+
+				glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
+				glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
+				glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
 				// The sphere's center is translated to the desired point.
 				glTranslatef(x, y, z);

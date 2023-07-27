@@ -28,7 +28,7 @@ engine::sphere sphere_object(10.0f);
 
 engine::light_source lamp(GL_LIGHT0);
 
-vector3d cam_dir = { 0.0f, 0.0f, -1.0f };
+vector3d cam_dir = { 0.0f, -1.0f, 0.0f };
 vector3d cam_pos = { 0.0f, 0.0f, 0.0f };
 
 #include "callbacks.h"

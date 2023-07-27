@@ -106,6 +106,13 @@ void passiveMotion(int x, int y)
 	cam_dir[1] = sin(vertical_angle);
 	cam_dir[2] = cos(vertical_angle) * cos(horizontal_angle);
 
+	if constexpr (LOG_CAMERA_ROTATATION)
+	{
+		logMessage(
+			"Now looking towards: (%.3lf, %.3lf, %.3lf)\n",
+			cam_dir[0], cam_dir[1], cam_dir[2]
+		);
+	}
 	// Returns mouse to the center of the window.
 	glutWarpPointer(windowCenter[0], windowCenter[1]);
 

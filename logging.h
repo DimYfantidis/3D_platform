@@ -4,7 +4,12 @@
 #include <cstdarg>
 
 
-constexpr bool LOGGING_ENABLED = false;
+constexpr bool LOGGING_ENABLED = true;
+
+constexpr bool LOG_SHAPES = false;
+
+constexpr bool LOG_CAMERA_ROTATATION = true;
+
 
 inline void logMessage(const char* format...)
 {
