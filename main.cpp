@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black Background
-	//glEnable(GL_LIGHTING);					// Lighting
+	//glEnable(GL_LIGHTING);				// Lighting
 	//glEnable(GL_LIGHT0);					// Light Source
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material

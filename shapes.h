@@ -22,7 +22,7 @@ namespace engine
 	{
 	public:
 		shape() 
-			: m_color(), m_ambient(), m_specular(), m_diffuse() 
+			: m_color(), m_ambient(), m_specular(), m_diffuse()
 		{}
 		
 		shape(const shape& other)
