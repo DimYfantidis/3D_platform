@@ -28,8 +28,8 @@ namespace engine
 		}
 
 		// Spawns the object with its center at the given point
-		virtual void spawn(float x, float y, float z) {}
-		void spawn(point3f p) { spawn(p[0], p[1], p[2]); }
+		virtual shape& spawn(float x, float y, float z) { return (*this); }
+		shape& spawn(point3f p) { return spawn(p[0], p[1], p[2]); }
 
 		shape& color(float red, float green, float blue) 
 		{
@@ -55,7 +55,7 @@ namespace engine
 			: shape(other), m_width(other.m_width), m_depth(other.m_depth)
 		{}
 
-		void spawn(float x, float y, float z)
+		shape& spawn(float x, float y, float z)
 		{
 			x -= m_width / 2;
 			z -= m_depth / 2;
@@ -88,6 +88,8 @@ namespace engine
 			glEnd();
 
 			glPopMatrix();
+
+			return (*this);
 		}
 
 	private:
@@ -107,7 +109,7 @@ namespace engine
 			: shape(other), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth)
 		{}
 
-		void spawn(float x, float y, float z) override
+		shape& spawn(float x, float y, float z) override
 		{
 			x -= m_width / 2;
 			y -= m_height / 2;
@@ -191,6 +193,8 @@ namespace engine
 			glEnd();
 
 			glPopMatrix();
+
+			return (*this);
 		}
 
 	private:
@@ -210,7 +214,7 @@ namespace engine
 			: shape(other), m_radius(other.m_radius)
 		{}
 
-		void spawn(float x, float y, float z) override 
+		shape& spawn(float x, float y, float z) override 
 		{
 			glPushMatrix();
 
@@ -221,6 +225,8 @@ namespace engine
 			tetrahedron(4);
 
 			glPopMatrix();
+
+			return (*this);
 		}
 
 	private:

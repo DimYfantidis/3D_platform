@@ -12,8 +12,8 @@
 #include "typedefs.h"
 
 
-int windowWidth = 600;
-int windowHeight = 600;
+int windowWidth = 800;
+int windowHeight = 800;
 int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 
 double move_speed = 2.0;
@@ -46,11 +46,16 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	point3f p = { -20.0f, 30.0f, 0.0f };
-
-	ground.color(0.0f, 1.0f, 0.0f).spawn(0.0f, 0.0f, 0.0f);
-	cuboid_object.color(0.0f, 0.0f, 1.0f).spawn(20.0f, 20.0f, 20.0f);
-	sphere_object.color(0.1254902f, 0.69803923f, 0.6666667f).spawn(p);
+	ground
+		.color(0.0f, 1.0f, 0.0f)
+		.spawn(0.0f, 0.0f, 0.0f);
+	cuboid_object
+		.color(0.0f, 0.0f, 1.0f)
+		.spawn(20.0f, 20.0f, 20.0f)
+		.spawn(-20.0f, 20.0f, -20.0f);
+	sphere_object
+		.color(1.0f, 1.0f, 0.0f)
+		.spawn(-20.0f, 30.0f, 0.0f);
 
 	glutSwapBuffers();
 }
