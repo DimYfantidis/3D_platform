@@ -11,13 +11,20 @@
 
 namespace engine
 {
+	/*	Parent class for all sort of geometric shapes.
+	*	Deriving classes include:
+	*		- Rectangle (2D)
+	*		- Cuboid (3D)
+	*		- Sphere (3D) 
+	*	Methods return shape& for chaining reasons.
+	*/
 	class shape
 	{
 	public:
 		shape() 
 			: m_color(), m_ambient(), m_specular(), m_diffuse() 
 		{}
-
+		
 		shape(const shape& other)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
@@ -26,7 +33,8 @@ namespace engine
 			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
 		}
 
-		// Spawns the object with its center at the given point
+		// Spawns the object with its center at the given point.
+		// Implementation is done by the derived classes.
 		virtual shape& spawn(float x, float y, float z) { return (*this); }
 		shape& spawn(const point3f p) { return spawn(p[0], p[1], p[2]); }
 
@@ -46,6 +54,8 @@ namespace engine
 			return (*this);
 		}
 
+		// Sets the material properties.
+		// Acceptanle values for pname are GL_AMBIENT, GL_SPECULAR and GL_DIFFUSE. */
 		shape& materialv(GLenum pname, const vector4f params) 
 		{
 			float* light_type;
@@ -68,18 +78,24 @@ namespace engine
 			return materialv(pname, params.data());
 		}
 
+		// Getters
+		const float* color() { return m_color; }
 		const float* ambient() { return m_ambient; }
 		const float* specular() { return m_specular; }
 		const float* diffuse() { return m_diffuse; }
 
 	protected:
+		// Color of geometric shape without lighting.
 		vector3f m_color;
+
+		// Material properties for enabled lighting.
 		vector4f m_ambient;
 		vector4f m_specular;
 		vector4f m_diffuse;
 	};
 
 
+	// Rectangles have width (x) and depth (z) but no height (y_top = y_bottom)
 	class rectangle : public shape
 	{
 	public:
@@ -91,7 +107,7 @@ namespace engine
 			: shape(other), m_width(other.m_width), m_depth(other.m_depth)
 		{}
 
-		shape& spawn(float x, float y, float z)
+		shape& spawn(float x, float y, float z) override
 		{
 			x -= m_width / 2;
 			z -= m_depth / 2;
@@ -112,6 +128,7 @@ namespace engine
 			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
+			// Rectangle consists of two congruent triangles (better speed)
 			glBegin(GL_TRIANGLES);
 			{
 				glNormal3f(0.0f, 1.0f, 0.0);
@@ -139,6 +156,7 @@ namespace engine
 	};
 
 
+	// The 3D version of a rectangle.
 	class cuboid : public shape
 	{
 	public:
@@ -169,8 +187,10 @@ namespace engine
 
 			glColor3fv(m_color);
 
+			// Consists of 6 rectangles(12 triangles).
 			glBegin(GL_TRIANGLES);
 			{
+				glNormal3f(0.0f, 0.0f, 1.0f);
 				// 1
 				glVertex3f(x, y, z);
 				glVertex3f(x + m_width, y, z);
@@ -181,6 +201,7 @@ namespace engine
 				glVertex3f(x, y + m_height, z);
 				glVertex3f(x + m_width, y + m_height, z);
 
+				glNormal3f(-1.0f, 0.0f, 0.0f);
 				// 3
 				glVertex3f(x, y, z);
 				glVertex3f(x, y + m_height, z);
@@ -191,6 +212,7 @@ namespace engine
 				glVertex3f(x, y, z + m_depth);
 				glVertex3f(x, y + m_height, z + m_depth);
 
+				glNormal3f(0.0f, 0.0f, -1.0f);
 				// 5
 				glVertex3f(x, y + m_height, z);
 				glVertex3f(x, y + m_height, z + m_depth);
@@ -201,6 +223,7 @@ namespace engine
 				glVertex3f(x + m_width, y + m_height, z);
 				glVertex3f(x + m_width, y + m_height, z + m_depth);
 
+				glNormal3f(1.0f, 0.0f, 0.0f);
 				// 7
 				glVertex3f(x + m_width, y + m_height, z);
 				glVertex3f(x + m_width, y, z);
@@ -211,6 +234,7 @@ namespace engine
 				glVertex3f(x + m_width, y + m_height, z + m_depth);
 				glVertex3f(x + m_width, y, z + m_depth);
 
+				glNormal3f(0.0f, -1.0f, 0.0f);
 				// 9
 				glVertex3f(x, y, z);
 				glVertex3f(x, y, z + m_depth);
@@ -221,6 +245,7 @@ namespace engine
 				glVertex3f(x + m_width, y, z);
 				glVertex3f(x + m_width, y, z + m_depth);
 
+				glNormal3f(0.0f, 1.0f, 0.0f);
 				// 11
 				glVertex3f(x, y, z + m_depth);
 				glVertex3f(x, y + m_height, z + m_depth);
@@ -244,7 +269,11 @@ namespace engine
 		float m_depth;
 	};
 
-	template <size_t REC_DEPTH = 4>
+
+	// Sphere class. REC_DEPTH represents the depth of the recursive 
+	// subdivision's tree depth. Default value is 4 but can be increased
+	// for larger spheres.
+	template <int REC_DEPTH = 4>
 	class sphere : public shape
 	{
 	public:
@@ -259,20 +288,26 @@ namespace engine
 		shape& spawn(float x, float y, float z) override 
 		{
 			glPushMatrix();
+			{
+				glColor3fv(m_color);
 
-			glColor3fv(m_color);
-			glTranslatef(x, y, z);
-			glScalef(m_radius, m_radius, m_radius);
+				// The sphere's center is translated to the desired point.
+				glTranslatef(x, y, z);
 
-			tetrahedron(REC_DEPTH);
+				// Sphere is uniformly scaled to meet its radius.
+				glScalef(m_radius, m_radius, m_radius);
 
+				// Recursive subdivision starts with the 
+				// tetrahedron's center at the origin.
+				tetrahedron(REC_DEPTH);
+			}
 			glPopMatrix();
 
 			return (*this);
 		}
 
 	private:
-		//Recursive sibdivision of a triangle into 4 equilateral triangles
+		// Recursive sibdivision of a triangle into 4 equilateral triangles.
 		void divide_triangle(point3f a, point3f b, point3f c, int m)
 		{
 			vector3f cross;
@@ -349,6 +384,7 @@ namespace engine
 	private:
 		float m_radius;
 	};
+
 
 	class light_source
 	{

@@ -1,5 +1,6 @@
 #pragma once
 
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -18,27 +19,36 @@ void display(void)
 	glLoadIdentity();
 
 	cuboid_object
+		.color(0.0f, 0.0f, 1.0f)
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.spawn(20.0f, 20.0f, 20.0f)
 		.spawn(-20.0f, 20.0f, -20.0f);
 	ground
+		.color(0.0f, 1.0f, 0.0f)
 		.materialv(GL_AMBIENT, { 0.3f, 1.0f, 0.3f, 0.0f })
 		.materialv(GL_SPECULAR, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 1.0f, 0.3f, 0.3f })
 		.spawn(0.0f, 0.0f, 0.0f);
 
 	sphere_object
+		.color(1.0f, 0.0f, 0.0f)
 		.spawn(-20.0f, 30.0f, 0.0f);
 	
-	sun.emission({ 0.2f, 0.2f, 0.0f, 1.0f }).spawn(10.0f, 10.0f, 10.0f);
+	lamp.emission({ 0.2f, 0.2f, 0.0f, 1.0f }).spawn(10.0f, 10.0f, 10.0f);
 
 	glutSwapBuffers();
 }
 
 void keyboard(unsigned char key, int x, int y)
 {
+	// Escape key
+	if (key == 27) {
+		exit(EXIT_SUCCESS);
+	}
+
+	// Camera movement (currently not working)
 	switch (tolower(key)) {
 	case 'w':
 		cam_pos[0] += cam_dir[0] * move_speed;
@@ -61,6 +71,7 @@ void keyboard(unsigned char key, int x, int y)
 	}
 }
 
+// Camera rotation
 void passiveMotion(int x, int y)
 {
 	using engine::sgn;
@@ -72,6 +83,7 @@ void passiveMotion(int x, int y)
 	int x_prev = windowCenter[0];
 	int y_prev = windowCenter[1];
 
+	// Camera's rotation speed is proportionate to mouse speed.
 	int dx = x_prev - x;
 	int dy = y_prev - y;
 
@@ -94,6 +106,7 @@ void passiveMotion(int x, int y)
 	cam_dir[1] = sin(vertical_angle);
 	cam_dir[2] = cos(vertical_angle) * cos(horizontal_angle);
 
+	// Returns mouse to the center of the window.
 	glutWarpPointer(windowCenter[0], windowCenter[1]);
 
 	glutPostRedisplay();

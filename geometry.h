@@ -63,6 +63,7 @@ namespace engine
 		out[2] = v1[0] * v2[1] - v1[1] * v2[0];
 	}
 
+	// Uniform scaling of a point/vector
 	void multiply(float p[3], float c)
 	{
 		p[0] *= c;
