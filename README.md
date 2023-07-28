@@ -6,6 +6,10 @@
     1. Create invisible body
     2. ~~Create Spherical camera~~
 * ~~Create a big plane~~
+* Create High Resolution Objects
+    1. Recursive function that adjusts vertices for high/low poly
+    2. Create textures
+    3. Create shadows
 * Create Gravity
 * Create Collision
 * ~~Create FOV~~
@@ -18,3 +22,6 @@
 * ~~Lock Mouse Inside application -> Track mouse with camera~~
 * Fix Lighting (real)
 * Create Skybox
+* Insert Music
+    1. Ambient music
+    2. SFX
