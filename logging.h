@@ -5,9 +5,7 @@
 
 
 constexpr bool LOG_SHAPES = false;
-
 constexpr bool LOG_CAMERA_ROTATATION = false;
-
 constexpr bool LOG_CAMERA_MOVEMENT = false;
 
 constexpr bool LOGGING_ENABLED = LOG_SHAPES || LOG_CAMERA_ROTATATION || LOG_CAMERA_MOVEMENT;

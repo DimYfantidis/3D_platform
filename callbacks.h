@@ -3,15 +3,18 @@
 
 void display(void)
 {
+	static const double aspect_ratio = (double)(windowWidth / windowHeight);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
+	gluPerspective(90.0, aspect_ratio, 1.0, 100.0);
+	//glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	gluLookAt(
-		0.0, 0.0, 0.0,
-		cam_dir[0], cam_dir[1], cam_dir[2],
+		cam_pos[0], cam_pos[1], cam_pos[2],
+		cam_pos[0] + cam_dir[0], cam_pos[1] + cam_dir[1], cam_pos[2] + cam_dir[2],
 		0.0, 1.0, 0.0
 	);
 
@@ -52,7 +55,6 @@ void keyboard(unsigned char key, int x, int y)
 	switch (tolower(key)) {
 	case 'w':
 		cam_pos[0] += cam_dir[0] * move_speed;
-		cam_pos[1] += cam_dir[1] * move_speed;
 		cam_pos[2] += cam_dir[2] * move_speed;
 		logMessage("Forward movement\n");
 		break;
@@ -61,7 +63,6 @@ void keyboard(unsigned char key, int x, int y)
 		break;
 	case 's':
 		cam_pos[0] -= cam_dir[0] * move_speed;
-		cam_pos[1] -= cam_dir[1] * move_speed;
 		cam_pos[2] -= cam_dir[2] * move_speed;
 		logMessage("Backwards movement\n");
 		break;

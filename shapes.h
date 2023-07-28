@@ -114,7 +114,6 @@ namespace engine
 
 			glPushMatrix();
 
-
 			if constexpr (LOG_SHAPES) 
 			{
 				logMessage("Spawning rectangle\n"

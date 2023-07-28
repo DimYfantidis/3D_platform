@@ -19,7 +19,7 @@ int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 int window_menu_id;
 
 // Camera movement speed.
-double move_speed = 2.0;
+double move_speed = 1.0;
 
 // Examplary objects.
 engine::rectangle ground(100.0f, 100.0f);
@@ -29,7 +29,8 @@ engine::sphere sphere_object(10.0f);
 engine::light_source lamp(GL_LIGHT0);
 
 vector3d cam_dir = { 0.0f, -1.0f, 0.0f };
-vector3d cam_pos = { 0.0f, 0.0f, 0.0f };
+vector3d cam_pos = { 0.0f, 1.7f, 0.0f };
+vector3d torso_dir = { 0.0f, 0.0f, -1.0f };
 
 #include "callbacks.h"
 #include "menu.h"
@@ -41,7 +42,7 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(windowWidth, windowHeight);
-	glutInitWindowPosition(0, 0);
+	glutInitWindowPosition(300, 100);
 	glutCreateWindow("3D Platformer");
 
 	// Attributes
@@ -60,10 +61,8 @@ int main(int argc, char* argv[])
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 
-	std::cout << sizeof(engine::shape) << std::endl;
-
 	// Returns mouse to the center of the window.
-	glutWarpPointer(windowWidth / 2, windowHeight / 2);
+	glutWarpPointer(windowCenter[0], windowCenter[1]);
 	// Hides cursor.
 	glutSetCursor(GLUT_CURSOR_NONE);
 
