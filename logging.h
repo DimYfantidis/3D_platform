@@ -6,9 +6,16 @@
 
 constexpr bool LOG_SHAPES = false;
 constexpr bool LOG_CAMERA_ROTATATION = false;
+constexpr bool LOG_TORSO_ORIENTATION = true;
 constexpr bool LOG_CAMERA_MOVEMENT = false;
+constexpr bool LOG_FPS = false;
 
-constexpr bool LOGGING_ENABLED = LOG_SHAPES || LOG_CAMERA_ROTATATION || LOG_CAMERA_MOVEMENT;
+constexpr bool LOGGING_ENABLED = 
+LOG_SHAPES || 
+LOG_CAMERA_ROTATATION || 
+LOG_TORSO_ORIENTATION || 
+LOG_CAMERA_MOVEMENT || 
+LOG_FPS;
 
 
 inline void logMessage(const char* format...)

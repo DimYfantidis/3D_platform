@@ -3,9 +3,11 @@
 
 void display(void)
 {
+#if LOG_FPS
 	auto start = std::chrono::high_resolution_clock::now();
+#endif
 	static const double aspect_ratio = (double)(windowWidth / windowHeight);
-
+	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
@@ -59,11 +61,11 @@ void display(void)
 
 	glutSwapBuffers();
 
+#if LOG_FPS
 	auto stop = std::chrono::high_resolution_clock::now();
-
 	std::chrono::duration<double> time = stop - start;
-
 	std::cout << "FPS: " << 1.0 / time.count() << '\n';
+#endif
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -76,19 +78,23 @@ void keyboard(unsigned char key, int x, int y)
 	// Camera movement (currently not working)
 	switch (tolower(key)) {
 	case 'w':
-		cam_pos[0] += cam_dir[0] * move_speed;
-		cam_pos[2] += cam_dir[2] * move_speed;
+		cam_pos[0] += torso_dir[0] * move_speed;
+		cam_pos[2] += torso_dir[2] * move_speed;
 		logMessage("Forward movement\n");
 		break;
 	case 'a':
+		cam_pos[0] += left_dir[0] * move_speed;
+		cam_pos[2] += left_dir[2] * move_speed;
 		logMessage("Left movement\n");
 		break;
 	case 's':
-		cam_pos[0] -= cam_dir[0] * move_speed;
-		cam_pos[2] -= cam_dir[2] * move_speed;
+		cam_pos[0] -= torso_dir[0] * move_speed;
+		cam_pos[2] -= torso_dir[2] * move_speed;
 		logMessage("Backwards movement\n");
 		break;
 	case 'd':
+		cam_pos[0] -= left_dir[0] * move_speed;
+		cam_pos[2] -= left_dir[2] * move_speed;
 		logMessage("Right movement\n");
 		break;
 	}
@@ -100,8 +106,8 @@ void passiveMotion(int x, int y)
 	using engine::sgn;
 
 	constexpr static double step = 0.001745;
-	static double horizontal_angle = M_PI_2;
-	static double vertical_angle = -M_PI_2;
+	static double horizontal_angle = -M_PI_2;
+	static double vertical_angle = 0;
 
 	int x_prev = windowCenter[0];
 	int y_prev = windowCenter[1];
@@ -124,10 +130,30 @@ void passiveMotion(int x, int y)
 	if (abs(vertical_angle) > M_PI_2) {
 		vertical_angle = sgn(vertical_angle) * M_PI_2;
 	}
+	double sin_vert = sin(vertical_angle);
+	double sin_horz = sin(horizontal_angle);
+	double cos_vert = cos(vertical_angle);
+	double cos_horz = cos(horizontal_angle);
 
-	cam_dir[0] = cos(vertical_angle) * sin(horizontal_angle);
-	cam_dir[1] = sin(vertical_angle);
-	cam_dir[2] = cos(vertical_angle) * cos(horizontal_angle);
+	cam_dir[0] = cos_vert * sin_horz;
+	cam_dir[1] = sin_vert;
+	cam_dir[2] = cos_vert * cos_horz;
+
+	torso_dir[0] = sin_horz;
+	torso_dir[2] = cos_horz;
+
+	left_dir[0] = cos_horz;
+	left_dir[2] = -sin_horz;
+
+	if constexpr (LOG_TORSO_ORIENTATION)
+	{
+		logMessage(
+			"Torso: (%.3lf, %.3lf, %.3lf)\t Left: (%.3lf, %.3lf, %.3lf)\n",
+			torso_dir[0], torso_dir[1], torso_dir[2],
+			left_dir[0], left_dir[1], left_dir[2]
+		);
+	}
+
 
 	if constexpr (LOG_CAMERA_ROTATATION)
 	{

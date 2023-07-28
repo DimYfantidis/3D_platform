@@ -30,9 +30,12 @@ engine::sphere mini_sphere(0.5f);
 
 engine::light_source lamp(GL_LIGHT0);
 
-vector3d cam_dir = { 0.0f, -1.0f, 0.0f };
-vector3d cam_pos = { 0.0f, 1.7f, 0.0f };
-vector3d torso_dir = { 0.0f, 0.0f, -1.0f };
+double cam_height = 1.7;
+
+volatile vector3d cam_dir = { 0.0, 0.0, -1.0 };
+volatile vector3d cam_pos = { 0.0, cam_height, 0.0 };
+volatile vector3d torso_dir = { 0.0, 0.0, -1.0 };
+volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
 
 #include "callbacks.h"
 #include "menu.h"
