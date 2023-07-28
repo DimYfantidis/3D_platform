@@ -6,6 +6,6 @@
 2. Create a big plane
 3. Create Gravity
 4. Create Collision
-5. Create FOV
+5. ~~Create FOV~~
 6. Create Movement
-7. Lock Mouse Inside application -> Track mouse with camera
+7. ~~Lock Mouse Inside application -> Track mouse with camera~~
