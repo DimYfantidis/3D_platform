@@ -3,14 +3,15 @@
 
 void display(void)
 {
+	auto start = std::chrono::high_resolution_clock::now();
 	static const double aspect_ratio = (double)(windowWidth / windowHeight);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90.0, aspect_ratio, 1.0, 100.0);
-	//glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
+	gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
+	// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	gluLookAt(
 		cam_pos[0], cam_pos[1], cam_pos[2],
@@ -22,26 +23,47 @@ void display(void)
 	glLoadIdentity();
 
 	cuboid_object
-		.color(0.0f, 0.0f, 1.0f)
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.spawn(20.0f, 20.0f, 20.0f)
 		.spawn(-20.0f, 20.0f, -20.0f);
 	ground
-		.color(0.0f, 1.0f, 0.0f)
 		.materialv(GL_AMBIENT, { 0.3f, 1.0f, 0.3f, 0.0f })
 		.materialv(GL_SPECULAR, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 1.0f, 0.3f, 0.3f })
 		.spawn(0.0f, 0.0f, 0.0f);
 
 	sphere_object
-		.color(1.0f, 0.0f, 0.0f)
+		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
+		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.spawn(-20.0f, 30.0f, 0.0f);
+
+	mini_sphere
+		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
+		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.spawn(1.0f, 1.0f, 1.0f)
+		.spawn(3.0f, 1.0f, 7.0f)
+		.spawn(8.0f, 1.0f, -6.0f)
+		.spawn(10.0f, 1.0f, -12.0f)
+		.spawn(9.0f, 1.0f, 15.0f);
 	
-	lamp.emission({ 0.2f, 0.2f, 0.0f, 1.0f }).spawn(10.0f, 10.0f, 10.0f);
+	lamp
+		.emission({ 0.2f, 0.2f, 0.0f, 1.0f })
+		.materialv(GL_DIFFUSE, { 1.0f, 1.0f, 0.0f, 1.0f })
+		.lightv(GL_SPECULAR, { 0.8f, 0.8f, 0.8f, 1.0f })
+		.lightv(GL_DIFFUSE, { 0.8f, 0.8f, 0.8f, 1.0f })
+		.spawn(10.0f, 10.0f, 10.0f);
 
 	glutSwapBuffers();
+
+	auto stop = std::chrono::high_resolution_clock::now();
+
+	std::chrono::duration<double> time = stop - start;
+
+	std::cout << "FPS: " << 1.0 / time.count() << '\n';
 }
 
 void keyboard(unsigned char key, int x, int y)

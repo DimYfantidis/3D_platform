@@ -126,21 +126,22 @@ namespace engine
 				);
 			}
 
-			glColor3fv(m_color);
+			glMaterialf(GL_FRONT, GL_SHININESS, 0.0f);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
+
 			// Rectangle consists of two congruent triangles (better speed)
 			glBegin(GL_TRIANGLES);
 			{
-				glNormal3f(0.0f, 1.0f, 0.0);
+				glNormal3f(0.0f, 1.0f, 0.0f);
 
 				// 1
 				glVertex3f(x, y, z);
-				glVertex3f(x, y, z + m_depth);
 				glVertex3f(x + m_width, y, z + m_depth);
-
+				glVertex3f(x, y, z + m_depth);
+				
 				// 2
 				glVertex3f(x, y, z);
 				glVertex3f(x + m_width, y, z);
@@ -364,7 +365,7 @@ namespace engine
 					b[0], b[1], b[2]
 				);
 
-				glBegin(GL_POLYGON);
+				glBegin(GL_TRIANGLES);
 				{
 					glNormal3fv(cross);
 					glVertex3fv(a);
@@ -380,10 +381,10 @@ namespace engine
 			//Starting values for the tetrahedron
 			//These values are inverted so the sun moves opposite to its light source
 			point3f v[] = {
-				{0.0000000f, 0.0000000f, 1.0000000f},
-				{0.0000000f, 0.9428090f, -0.333333f},
-				{-0.816497f, -0.471405f, -0.333333f},
-				{0.8164970f, -0.471405f, -0.333333f}
+				{-0.0000000f, -0.0000000f, -1.0000000f},
+				{-0.0000000f, -0.9428090f, 0.333333f},
+				{0.816497f, 0.471405f, 0.333333f},
+				{-0.8164970f, 0.471405f, 0.333333f}
 			};
 
 			//Take the points of the tetrahedron and divide it into 4 triangles
@@ -403,11 +404,15 @@ namespace engine
 	{
 	public:
 		light_source(GLenum id, float radius = 1.0f) 
-			: m_light_id(id), m_emission(), m_cell(new sphere(radius))
+			: m_light_id(id), m_emission(), 
+			m_ambient(), m_specular(), m_diffuse(), 
+			m_cell(new sphere(radius))
 		{}
 
 		light_source(GLenum id, float width, float height, float depth)
-			: m_light_id(id), m_emission(), m_cell(new cuboid(width, height, depth))
+			: m_light_id(id), m_emission(), 
+			m_ambient(), m_specular(), m_diffuse(), 
+			m_cell(new cuboid(width, height, depth))
 		{}
 
 		~light_source() {
@@ -415,7 +420,7 @@ namespace engine
 		}
 
 		light_source& emission(const vector4f params) {
-			memmove(m_emission, params, sizeof(vector3f));
+			memmove(m_emission, params, sizeof(vector4f));
 			return (*this);
 		}
 
@@ -423,15 +428,37 @@ namespace engine
 			return emission(params.data());
 		}
 
-		template <typename T>
-		light_source& materialv(GLenum pname, const T params) {
+		light_source& materialv(GLenum pname, const std::array<float, 4>& params) {
 			m_cell->materialv(pname, params);
 			return (*this);
 		}
 
+		light_source& lightv(GLenum pname, const vector4f params) 
+		{
+			float* light_type;
+
+			if (pname == GL_AMBIENT)
+				light_type = m_ambient;
+			else if (pname == GL_SPECULAR)
+				light_type = m_specular;
+			else if (pname == GL_DIFFUSE)
+				light_type = m_diffuse;
+			else {
+				logMessage("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
+				return (*this);
+			}
+			memmove(light_type, params, sizeof(vector4f));
+
+			return (*this);
+		}
+
+		light_source& lightv(GLenum pname, const std::array<float, 4>& params) {
+			return lightv(pname, params.data());
+		}
+
 		light_source& spawn(float x, float y, float z) 
 		{
-			vector3f position = { x, y, z };
+			vector4f position = { x, y, z, 0.0f};
 
 			glPushMatrix();
 			{
@@ -443,8 +470,8 @@ namespace engine
 
 				//Create light as a directional spotlight
 				glLightfv(m_light_id, GL_POSITION, position);
-				glLightfv(GL_LIGHT0, GL_DIFFUSE, m_cell->diffuse());
-				glLightfv(GL_LIGHT0, GL_SPECULAR, m_cell->specular());
+				glLightfv(m_light_id, GL_DIFFUSE, m_diffuse);
+				glLightfv(m_light_id, GL_SPECULAR, m_specular);
 			}
 			glPopMatrix();
 			
@@ -453,6 +480,11 @@ namespace engine
 
 	private:
 		vector4f m_emission;
+
+		vector4f m_ambient;
+		vector4f m_specular;
+		vector4f m_diffuse;
+
 		GLenum m_light_id;
 		shape* m_cell;
 	};

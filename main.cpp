@@ -1,6 +1,7 @@
 #define _USE_MATH_DEFINES
 
 #include <cmath>
+#include <chrono>
 #include <cctype>
 #include <vector>
 #include <cstdlib>
@@ -19,12 +20,13 @@ int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 int window_menu_id;
 
 // Camera movement speed.
-double move_speed = 1.0;
+double move_speed = 0.3;
 
 // Examplary objects.
 engine::rectangle ground(100.0f, 100.0f);
 engine::cuboid cuboid_object(8.0f, 8.0f, 8.0f);
 engine::sphere sphere_object(10.0f);
+engine::sphere mini_sphere(0.5f);
 
 engine::light_source lamp(GL_LIGHT0);
 
@@ -42,19 +44,21 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(windowWidth, windowHeight);
-	glutInitWindowPosition(300, 100);
+	glutInitWindowPosition(700, 100);
 	glutCreateWindow("3D Platformer");
 
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black Background
-	//glEnable(GL_LIGHTING);				// Lighting
-	//glEnable(GL_LIGHT0);					// Light Source
+	glEnable(GL_LIGHTING);				// Lighting
+	glEnable(GL_LIGHT0);					// Light Source
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
 	// Pre-compiled lists initialization
 	//init_lists();
+
+	glShadeModel(GL_SMOOTH);
 
 	// Window menu
 	create_window_menu();
