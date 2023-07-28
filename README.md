@@ -15,7 +15,7 @@
 * ~~Create FOV~~
 * Create Movement  
     1. ~~Forward and Back~~
-    2. Left and Right
+    2. ~~Left and Right~~
     3. Acceleration and Desceleration
     4. Smooth Movement
     5. Jump (Needs Collision First)
