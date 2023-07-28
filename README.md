@@ -2,10 +2,19 @@
 3D platform parkour
 
 **TODO**:
-1. Create Camera inside an invisible cube
-2. Create a big plane
-3. Create Gravity
-4. Create Collision
-5. ~~Create FOV~~
-6. Create Movement
-7. ~~Lock Mouse Inside application -> Track mouse with camera~~
+* Create Camera inside an invisible cube
+    1. Create invisible body
+    2. ~~Create Spherical camera~~
+* ~~Create a big plane~~
+* Create Gravity
+* Create Collision
+* ~~Create FOV~~
+* Create Movement  
+    1. ~~Forward and Back~~
+    2. Left and Right
+    3. Acceleration and Desceleration
+    4. Smooth Movement
+    5. Jump (Needs Collision First)
+* ~~Lock Mouse Inside application -> Track mouse with camera~~
+* Fix Lighting (real)
+* Create Skybox
