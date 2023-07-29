@@ -3,7 +3,6 @@
 
 void display(void)
 {
-	static const float fps_log_pos[2] = { 10.0f, (float)windowHeight - 20.0f };
 	static std::chrono::steady_clock::time_point start;
 	static std::chrono::steady_clock::time_point stop;
 	static std::chrono::duration<double> time;
@@ -47,14 +46,12 @@ void display(void)
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.materialv(100, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.spawn(-20.0f, 30.0f, 0.0f);
 
 	ball
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.materialv(32, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.spawn(1.0f, 1.0f, 1.0f)
 		.spawn(3.0f, 1.0f, 7.0f)
 		.spawn(8.0f, 1.0f, -6.0f)
@@ -169,7 +166,7 @@ void passiveMotion(int x, int y)
 			torso_dir[0], torso_dir[1], torso_dir[2]
 		);
 		logger.logMessage(
-			"> Left: (%.3lf, %.3lf, %.3lf)",
+			"> Left:  (%.3lf, %.3lf, %.3lf)",
 			left_dir[0], left_dir[1], left_dir[2]
 		);
 	}

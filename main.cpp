@@ -45,6 +45,8 @@ volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
 #include "menu.h"
 
 
+void init_lists(void) {}
+
 int main(int argc, char* argv[])
 {
 	// Window Creation
@@ -57,41 +59,42 @@ int main(int argc, char* argv[])
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);	// Black Background
-	glEnable(GL_LIGHTING);				// Lighting
+	glEnable(GL_LIGHTING);					// Lighting
 	glEnable(GL_LIGHT0);					// Light Source
+	glShadeModel(GL_SMOOTH);
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
 	// Pre-compiled lists initialization
-	//init_lists();
-
-	glShadeModel(GL_SMOOTH);
+	init_lists();
 
 	// Window menu
 	create_window_menu();
 
+	// ----------- Window Matrix (BEGIN) ----------- //
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+
+	// Initialization of Window Matrix for on-screen string rendering.
 	glPushMatrix();
 	{
 		gluOrtho2D(0.0, (double)windowWidth, 0.0, (double)windowHeight);
 		glGetFloatv(GL_PROJECTION_MATRIX, windowMatrix);
 	}
 	glPopMatrix();
-
-	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
+	// ----------- Window Matrix (BEGIN) ----------- //
 
 	// Returns mouse to the center of the window.
 	glutWarpPointer(windowCenter[0], windowCenter[1]);
 	// Hides cursor.
 	glutSetCursor(GLUT_CURSOR_NONE);
 
+	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 	glutSpecialFunc(NULL);
 	glutDisplayFunc(display);
 	glutIdleFunc(NULL);
 	glutKeyboardFunc(keyboard);
 	glutPassiveMotionFunc(passiveMotion);
-
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
 	glutMainLoop();

@@ -69,7 +69,7 @@ namespace engine
 			else if (pname == GL_DIFFUSE)
 				light_type = m_diffuse;
 			else {
-				logger.logWarning("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
+				logger.logWarning("WARNING: undefined lighting type (0x%04x) in shape's \"0x%X\" meterial", pname, this);
 				return (*this);
 			}
 			memmove(light_type, params, sizeof(vector4f));
