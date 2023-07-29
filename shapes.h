@@ -9,6 +9,8 @@
 #include "geometry.h"
 
 
+extern ScreenLogger logger;
+
 namespace engine
 {
 	/*	Parent class for all sort of geometric shapes.
@@ -67,7 +69,7 @@ namespace engine
 			else if (pname == GL_DIFFUSE)
 				light_type = m_diffuse;
 			else {
-				logMessage("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
+				logger.logWarning("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
 				return (*this);
 			}
 			memmove(light_type, params, sizeof(vector4f));
@@ -92,6 +94,9 @@ namespace engine
 		vector4f m_ambient;
 		vector4f m_specular;
 		vector4f m_diffuse;
+
+		static const float warning_log_pos[2];
+		static const float shape_log_pos[2];
 	};
 
 
@@ -115,10 +120,8 @@ namespace engine
 			glPushMatrix();
 
 			if constexpr (LOG_SHAPES)
-				logMessage("Spawning rectangle\n"
-					"> pos={%.3f, %.3f, %.3f}\n"
-					"> dim={%.3f, %.3f, %.3f}\n"
-					"> color={%.3f, %.3f, %.3f}\n",
+				logger.logMessage(
+					"Spawning rectangle at (%.3f, %.3f, %.3f), dim=(%.3f, %.3f, %.3f)",
 					x, y, z,
 					m_width, 0.0f, m_depth,
 					m_color[0], m_color[1], m_color[2]
@@ -179,10 +182,8 @@ namespace engine
 			glPushMatrix();
 
 			if constexpr (LOG_SHAPES)
-				logMessage("Spawning cuboid\n"
-					"> pos={%.3f, %.3f, %.3f}\n"
-					"> dim={%.3f, %.3f, %.3f}\n"
-					"> color={%.3f, %.3f, %.3f}\n",
+				logger.logMessage(
+					"Spawning cuboid at (%.3f, %.3f, %.3f), dim=(%.3f, %.3f, %.3f)", 
 					x, y, z,
 					m_width, m_height, m_depth,
 					m_color[0], m_color[1], m_color[2]
@@ -294,10 +295,8 @@ namespace engine
 		shape& spawn(float x, float y, float z) override 
 		{
 			if constexpr (LOG_SHAPES)
-				logMessage("Spawning sphere\n"
-					"> pos={%.3f, %.3f, %.3f}\n"
-					"> radius = %.3f\n"
-					"> color={%.3f, %.3f, %.3f}\n",
+				logger.logMessage(
+					"Spawning sphere at (%.3f, %.3f, %.3f), radius = %.3f", 
 					x, y, z,
 					m_radius,
 					m_color[0], m_color[1], m_color[2]
@@ -450,7 +449,8 @@ namespace engine
 			else if (pname == GL_DIFFUSE)
 				light_type = m_diffuse;
 			else {
-				logMessage("WARNING: undefined lighting type in shape's \"%X\" meterial", this);
+				logger.logWarning(
+					"WARNING: undefined lighting type in shape's \"%X\" meterial", this);
 				return (*this);
 			}
 			memmove(light_type, params, sizeof(vector4f));
@@ -493,5 +493,7 @@ namespace engine
 
 		GLenum m_light_id;
 		shape* m_cell;
+
+		static const float warning_log_pos[2];
 	};
 }

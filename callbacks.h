@@ -3,8 +3,12 @@
 
 void display(void)
 {
+	static const float fps_log_pos[2] = { 10.0f, (float)windowHeight - 20.0f };
 	static std::chrono::steady_clock::time_point start;
 	static std::chrono::steady_clock::time_point stop;
+	static std::chrono::duration<double> time;
+	static float windowMatrix[16];
+
 
 	if constexpr (LOG_FPS)
 		start = std::chrono::high_resolution_clock::now();
@@ -15,7 +19,7 @@ void display(void)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	// gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
+	gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
 	// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	gluLookAt(
@@ -45,7 +49,7 @@ void display(void)
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.spawn(-20.0f, 30.0f, 0.0f);
 
-	mini_sphere
+	ball
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
@@ -62,14 +66,16 @@ void display(void)
 		.lightv(GL_DIFFUSE, { 0.8f, 0.8f, 0.8f, 1.0f })
 		.spawn(10.0f, 10.0f, 10.0f);
 
-	glutSwapBuffers();
-
 	if constexpr (LOG_FPS)
 	{
 		stop = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<double> time = stop - start;
-		logMessage("FPS: %.3lf\n", 1.0 / time.count());
+		time = stop - start;
+		logger.logMessage("FPS: %.3lf", 1.0 / time.count());
 	}
+
+	logger.flushLogBuffer();
+
+	glutSwapBuffers();
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -79,31 +85,30 @@ void keyboard(unsigned char key, int x, int y)
 		exit(EXIT_SUCCESS);
 	}
 
-	// Camera movement (currently not working)
 	switch (tolower(key)) {
 	case 'w':
 		cam_pos[0] += torso_dir[0] * move_speed;
 		cam_pos[2] += torso_dir[2] * move_speed;
 		if constexpr (LOG_CAMERA_MOVEMENT)
-			logMessage("Forward movement\n");
+			logger.logMessage("Forward movement");
 		break;
 	case 'a':
 		cam_pos[0] += left_dir[0] * move_speed;
 		cam_pos[2] += left_dir[2] * move_speed;
 		if constexpr (LOG_CAMERA_MOVEMENT)
-			logMessage("Left movement\n");
+			logger.logMessage("Left movement");
 		break;
 	case 's':
 		cam_pos[0] -= torso_dir[0] * move_speed;
 		cam_pos[2] -= torso_dir[2] * move_speed;
 		if constexpr (LOG_CAMERA_MOVEMENT)
-			logMessage("Backwards movement\n");
+			logger.logMessage("Backwards movement");
 		break;
 	case 'd':
 		cam_pos[0] -= left_dir[0] * move_speed;
 		cam_pos[2] -= left_dir[2] * move_speed;
 		if constexpr (LOG_CAMERA_MOVEMENT)
-			logMessage("Right movement\n");
+			logger.logMessage("Right movement");
 		break;
 	}
 }
@@ -154,15 +159,15 @@ void passiveMotion(int x, int y)
 	left_dir[2] = -sin_horz;
 
 	if constexpr (LOG_TORSO_ORIENTATION)
-		logMessage(
-			"Torso: (%.3lf, %.3lf, %.3lf)\t Left: (%.3lf, %.3lf, %.3lf)\n",
+		logger.logMessage(
+			"Torso: (%.3lf, %.3lf, %.3lf) | Left: (%.3lf, %.3lf, %.3lf)",
 			torso_dir[0], torso_dir[1], torso_dir[2],
 			left_dir[0], left_dir[1], left_dir[2]
 		);
 
 	if constexpr (LOG_CAMERA_ROTATATION)
-		logMessage(
-			"Now looking towards: (%.3lf, %.3lf, %.3lf)\n",
+		logger.logMessage(
+			"Now looking towards: (%.3lf, %.3lf, %.3lf)",
 			cam_dir[0], cam_dir[1], cam_dir[2]
 		);
 

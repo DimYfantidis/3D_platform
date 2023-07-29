@@ -19,6 +19,9 @@ int windowWidth = 800;
 int windowHeight = 800;
 int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 int window_menu_id;
+float windowMatrix[16];
+
+ScreenLogger logger(windowWidth, windowHeight);
 
 // Camera movement speed.
 double move_speed = 0.3;
@@ -27,7 +30,7 @@ double move_speed = 0.3;
 engine::rectangle ground(100.0f, 100.0f);
 engine::cuboid cuboid_object(8.0f, 8.0f, 8.0f);
 engine::sphere sphere_object(10.0f);
-engine::sphere mini_sphere(0.5f);
+engine::sphere ball(0.5f);
 
 engine::light_source lamp(GL_LIGHT0);
 
@@ -66,6 +69,15 @@ int main(int argc, char* argv[])
 
 	// Window menu
 	create_window_menu();
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glPushMatrix();
+	{
+		gluOrtho2D(0.0, (double)windowWidth, 0.0, (double)windowHeight);
+		glGetFloatv(GL_PROJECTION_MATRIX, windowMatrix);
+	}
+	glPopMatrix();
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 

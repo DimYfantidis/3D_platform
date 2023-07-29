@@ -7,18 +7,26 @@
 #include "typedefs.h"
 
 
+extern float windowMatrix[16];
+
 namespace engine
 {
 	void renderString(float x, float y, void* font, const char* string, const vector3f rgb)
 	{
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushAttrib(GL_COLOR_BUFFER_BIT);
 		{
-			const char* c;
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix();
+			{
+				glLoadMatrixf(windowMatrix);
+				glDisable(GL_LIGHTING);
+				glColor3f(rgb[0], rgb[1], rgb[2]);
+				glRasterPos2f(x, y);
 
-			glColor3f(rgb[0], rgb[1], rgb[2]);
-			glRasterPos2f(x, y);
-
-			glutBitmapString(font, (const unsigned char*)string);
+				glutBitmapString(font, (const unsigned char*)string);
+				glEnable(GL_LIGHTING);
+			}
+			glPopMatrix();
 		}
 		glPopAttrib();
 	}
