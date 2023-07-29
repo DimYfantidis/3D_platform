@@ -11,6 +11,7 @@
 #include "shapes.h"
 #include "logging.h"
 #include "typedefs.h"
+#include "rendering.h"
 
 
 // Window's dimension and info.
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
 
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);	// Black Background
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);	// Black Background
 	glEnable(GL_LIGHTING);				// Lighting
 	glEnable(GL_LIGHT0);					// Light Source
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units

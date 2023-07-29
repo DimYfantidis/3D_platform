@@ -3,16 +3,19 @@
 
 void display(void)
 {
-#if LOG_FPS
-	auto start = std::chrono::high_resolution_clock::now();
-#endif
+	static std::chrono::steady_clock::time_point start;
+	static std::chrono::steady_clock::time_point stop;
+
+	if constexpr (LOG_FPS)
+		start = std::chrono::high_resolution_clock::now();
+
 	static const double aspect_ratio = (double)(windowWidth / windowHeight);
 	
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
+	// gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
 	// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	gluLookAt(
@@ -61,11 +64,12 @@ void display(void)
 
 	glutSwapBuffers();
 
-#if LOG_FPS
-	auto stop = std::chrono::high_resolution_clock::now();
-	std::chrono::duration<double> time = stop - start;
-	std::cout << "FPS: " << 1.0 / time.count() << '\n';
-#endif
+	if constexpr (LOG_FPS)
+	{
+		stop = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<double> time = stop - start;
+		logMessage("FPS: %.3lf\n", 1.0 / time.count());
+	}
 }
 
 void keyboard(unsigned char key, int x, int y)
@@ -80,22 +84,26 @@ void keyboard(unsigned char key, int x, int y)
 	case 'w':
 		cam_pos[0] += torso_dir[0] * move_speed;
 		cam_pos[2] += torso_dir[2] * move_speed;
-		logMessage("Forward movement\n");
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logMessage("Forward movement\n");
 		break;
 	case 'a':
 		cam_pos[0] += left_dir[0] * move_speed;
 		cam_pos[2] += left_dir[2] * move_speed;
-		logMessage("Left movement\n");
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logMessage("Left movement\n");
 		break;
 	case 's':
 		cam_pos[0] -= torso_dir[0] * move_speed;
 		cam_pos[2] -= torso_dir[2] * move_speed;
-		logMessage("Backwards movement\n");
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logMessage("Backwards movement\n");
 		break;
 	case 'd':
 		cam_pos[0] -= left_dir[0] * move_speed;
 		cam_pos[2] -= left_dir[2] * move_speed;
-		logMessage("Right movement\n");
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logMessage("Right movement\n");
 		break;
 	}
 }
@@ -146,22 +154,18 @@ void passiveMotion(int x, int y)
 	left_dir[2] = -sin_horz;
 
 	if constexpr (LOG_TORSO_ORIENTATION)
-	{
 		logMessage(
 			"Torso: (%.3lf, %.3lf, %.3lf)\t Left: (%.3lf, %.3lf, %.3lf)\n",
 			torso_dir[0], torso_dir[1], torso_dir[2],
 			left_dir[0], left_dir[1], left_dir[2]
 		);
-	}
-
 
 	if constexpr (LOG_CAMERA_ROTATATION)
-	{
 		logMessage(
 			"Now looking towards: (%.3lf, %.3lf, %.3lf)\n",
 			cam_dir[0], cam_dir[1], cam_dir[2]
 		);
-	}
+
 	// Returns mouse to the center of the window.
 	glutWarpPointer(windowCenter[0], windowCenter[1]);
 

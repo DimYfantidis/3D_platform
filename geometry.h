@@ -32,7 +32,7 @@ namespace engine
 	*	To get the outer product of a triangle's sides, they must be
 	*	inserted clockwise in order for it to point out of the object.
 	*/
-	void cross_product(vector3f out,
+	void crossProduct(vector3f out,
 		float p00, float p01, float p02,
 		float p10, float p11, float p12,
 		float p20, float p21, float p22)
@@ -45,7 +45,7 @@ namespace engine
 		out[2] = v1[0] * v2[1] - v1[1] * v2[0];
 	}
 
-	void cross_product(vector3f out,
+	void crossProduct(vector3f out,
 		point3f p0, point3f p1, point3f p2)
 	{
 		vector3f v2 = { p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2] };
@@ -56,7 +56,7 @@ namespace engine
 		out[2] = v1[0] * v2[1] - v1[1] * v2[0];
 	}
 
-	void cross_product(vector3f out, vector3f v1, vector3f v2)
+	void crossProduct(vector3f out, vector3f v1, vector3f v2)
 	{
 		out[0] = v1[1] * v2[2] - v1[2] * v2[1];
 		out[1] = v1[2] * v2[0] - v1[0] * v2[2];

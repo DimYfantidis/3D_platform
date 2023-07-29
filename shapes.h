@@ -114,8 +114,7 @@ namespace engine
 
 			glPushMatrix();
 
-			if constexpr (LOG_SHAPES) 
-			{
+			if constexpr (LOG_SHAPES)
 				logMessage("Spawning rectangle\n"
 					"> pos={%.3f, %.3f, %.3f}\n"
 					"> dim={%.3f, %.3f, %.3f}\n"
@@ -124,7 +123,6 @@ namespace engine
 					m_width, 0.0f, m_depth,
 					m_color[0], m_color[1], m_color[2]
 				);
-			}
 
 			glMaterialf(GL_FRONT, GL_SHININESS, 0.0f);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
@@ -181,7 +179,6 @@ namespace engine
 			glPushMatrix();
 
 			if constexpr (LOG_SHAPES)
-			{
 				logMessage("Spawning cuboid\n"
 					"> pos={%.3f, %.3f, %.3f}\n"
 					"> dim={%.3f, %.3f, %.3f}\n"
@@ -190,7 +187,6 @@ namespace engine
 					m_width, m_height, m_depth,
 					m_color[0], m_color[1], m_color[2]
 				);
-			}
 
 			glColor3fv(m_color);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
@@ -297,6 +293,16 @@ namespace engine
 
 		shape& spawn(float x, float y, float z) override 
 		{
+			if constexpr (LOG_SHAPES)
+				logMessage("Spawning sphere\n"
+					"> pos={%.3f, %.3f, %.3f}\n"
+					"> radius = %.3f\n"
+					"> color={%.3f, %.3f, %.3f}\n",
+					x, y, z,
+					m_radius,
+					m_color[0], m_color[1], m_color[2]
+				);
+
 			glPushMatrix();
 			{
 				glColor3fv(m_color);
@@ -359,7 +365,7 @@ namespace engine
 			//Draw final points as polygons onto the unit sphere
 			else
 			{
-				cross_product(cross,
+				crossProduct(cross,
 					c[0], c[1], c[2],
 					a[0], a[1], a[2],
 					b[0], b[1], b[2]
