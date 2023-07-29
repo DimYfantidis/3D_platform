@@ -16,9 +16,10 @@
 * Create Movement  
     1. ~~Forward and Back~~
     2. ~~Left and Right~~
-    3. Acceleration and Desceleration
-    4. Smooth Movement
-    5. Jump (Needs Collision First)
+    3. Delta Time
+    4. Acceleration and Desceleration
+    5. Smooth Movement
+    6. Jump (Needs Collision First)
 * ~~Lock Mouse Inside application -> Track mouse with camera~~
 * Fix Lighting (real)
 * Create Skybox
