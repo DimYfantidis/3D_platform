@@ -94,9 +94,6 @@ namespace engine
 		vector4f m_ambient;
 		vector4f m_specular;
 		vector4f m_diffuse;
-
-		static const float warning_log_pos[2];
-		static const float shape_log_pos[2];
 	};
 
 
@@ -493,7 +490,5 @@ namespace engine
 
 		GLenum m_light_id;
 		shape* m_cell;
-
-		static const float warning_log_pos[2];
 	};
 }

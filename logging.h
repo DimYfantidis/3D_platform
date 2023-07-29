@@ -11,8 +11,8 @@
 
 
 constexpr bool LOG_SHAPES = false;
-constexpr bool LOG_CAMERA_ROTATATION = true;
-constexpr bool LOG_TORSO_ORIENTATION = true;
+constexpr bool LOG_CAMERA_ROTATATION = false;
+constexpr bool LOG_TORSO_ORIENTATION = false;
 constexpr bool LOG_CAMERA_MOVEMENT = false;
 constexpr bool LOG_FPS = true;
 
@@ -22,7 +22,7 @@ class ScreenLogger
 public:
 	ScreenLogger(int scrWidth, int scrHeight)
 		: m_width(scrWidth), m_height(scrHeight),
-		m_info_buffer(), m_warning_buffer(), m_line()
+		m_info_buffer(), m_warning_buffer(), m_line(), m_fps()
 	{}
 
 	void logMessage(const char* format...)
@@ -49,6 +49,10 @@ public:
 		m_warning_buffer.push_back(m_line);
 	}
 
+	void logFPS(double fps) {
+		std::snprintf(m_fps, 30, "FPS: %.3lf", fps);
+	}
+
 	void flushLogBuffer(void)
 	{
 		int i = 0;
@@ -56,6 +60,11 @@ public:
 
 		static vector3f info_color = { 1.0f, 1.0f, 1.0f };
 		static vector3f warning_color = { 1.0f, 0.0f, 0.0f };
+		
+		engine::renderString(10.0f, (float)m_height - 20.0f,
+			GLUT_BITMAP_9_BY_15, m_fps, info_color
+		);
+		i++;
 
 		for (const std::string& info : m_info_buffer) 
 		{
@@ -68,7 +77,7 @@ public:
 		for (const std::string& warning : m_warning_buffer)
 		{
 			engine::renderString(
-				(float)m_width - 300.0f, (float)m_height - 20.0f - j * 17.0f,
+				10.0f, 20.0f + j * 17.0f,
 				GLUT_BITMAP_9_BY_15, warning.c_str(), warning_color
 			);
 			j++;
@@ -85,4 +94,5 @@ private:
 	std::vector<std::string> m_warning_buffer;
 
 	char m_line[BUFSIZ];
+	char m_fps[30];
 };

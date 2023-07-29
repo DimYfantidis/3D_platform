@@ -47,12 +47,14 @@ void display(void)
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.materialv(100, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.spawn(-20.0f, 30.0f, 0.0f);
 
 	ball
 		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
 		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.materialv(32, { 0.0f, 0.0f, 0.0f, 0.0f })
 		.spawn(1.0f, 1.0f, 1.0f)
 		.spawn(3.0f, 1.0f, 7.0f)
 		.spawn(8.0f, 1.0f, -6.0f)
@@ -70,7 +72,7 @@ void display(void)
 	{
 		stop = std::chrono::high_resolution_clock::now();
 		time = stop - start;
-		logger.logMessage("FPS: %.3lf", 1.0 / time.count());
+		logger.logFPS(1.0 / time.count());
 	}
 
 	logger.flushLogBuffer();
@@ -111,6 +113,7 @@ void keyboard(unsigned char key, int x, int y)
 			logger.logMessage("Right movement");
 		break;
 	}
+	glutPostRedisplay();
 }
 
 // Camera rotation
@@ -159,11 +162,17 @@ void passiveMotion(int x, int y)
 	left_dir[2] = -sin_horz;
 
 	if constexpr (LOG_TORSO_ORIENTATION)
+	{
+		logger.logMessage("Body Orientation:");
 		logger.logMessage(
-			"Torso: (%.3lf, %.3lf, %.3lf) | Left: (%.3lf, %.3lf, %.3lf)",
-			torso_dir[0], torso_dir[1], torso_dir[2],
+			"> Torso: (%.3lf, %.3lf, %.3lf)",
+			torso_dir[0], torso_dir[1], torso_dir[2]
+		);
+		logger.logMessage(
+			"> Left: (%.3lf, %.3lf, %.3lf)",
 			left_dir[0], left_dir[1], left_dir[2]
 		);
+	}
 
 	if constexpr (LOG_CAMERA_ROTATATION)
 		logger.logMessage(
