@@ -193,7 +193,7 @@ void passiveMotion(int x, int y)
 
 	if constexpr (LOG_CAMERA_ROTATATION)
 		logger.logMessage(
-			"Now looking towards: (%.3lf, %.3lf, %.3lf)",
+			"Camera Orientation: (%.3lf, %.3lf, %.3lf)",
 			cam_dir[0], cam_dir[1], cam_dir[2]
 		);
 

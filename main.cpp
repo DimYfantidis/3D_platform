@@ -15,8 +15,9 @@
 
 
 // Window's dimension and info.
-int windowWidth = 800;
-int windowHeight = 800;
+bool FULLSCREEN = true;
+int windowWidth = (FULLSCREEN ? 2560 : 1000);
+int windowHeight = (FULLSCREEN ? 1440 : 800);
 int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 int window_menu_id;
 float windowMatrix[16];
@@ -53,8 +54,11 @@ int main(int argc, char* argv[])
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(windowWidth, windowHeight);
-	glutInitWindowPosition(700, 100);
+	glutInitWindowPosition(500, 100);
 	glutCreateWindow("3D Platformer");
+
+	if (FULLSCREEN)
+		glutFullScreen();
 
 	// Attributes
 	glEnable(GL_DEPTH_TEST);				// Depth Buffer
