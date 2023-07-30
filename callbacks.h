@@ -144,7 +144,7 @@ void passiveMotion(int x, int y)
 {
 	using engine::sgn;
 
-	constexpr static double step = 0.001745;
+	constexpr static double step = 0.1745;
 	static double horizontal_angle = -M_PI_2;
 	static double vertical_angle = 0;
 
@@ -155,7 +155,7 @@ void passiveMotion(int x, int y)
 	int dx = x_prev - x;
 	int dy = y_prev - y;
 
-	horizontal_angle += dx * step;
+	horizontal_angle += dx * step * deltaTime;
 
 	if (horizontal_angle < -M_PI) {
 		horizontal_angle += 2 * M_PI;
@@ -164,7 +164,7 @@ void passiveMotion(int x, int y)
 		horizontal_angle -= 2 * M_PI;
 	}
 	if (sgn(dy) != sgn(vertical_angle) || abs(vertical_angle) < M_PI_2) {
-		vertical_angle += dy * step;
+		vertical_angle += dy * step * deltaTime;
 	}
 	if (abs(vertical_angle) > M_PI_2) {
 		vertical_angle = sgn(vertical_angle) * M_PI_2;
