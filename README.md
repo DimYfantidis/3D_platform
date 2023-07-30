@@ -16,7 +16,7 @@
 * Create Movement  
     1. ~~Forward and Back~~
     2. ~~Left and Right~~
-    3. Delta Time
+    3. ~~Delta Time~~
     4. Acceleration and Desceleration
     5. Smooth Movement
     6. Jump (Needs Collision First)
