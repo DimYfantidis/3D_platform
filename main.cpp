@@ -25,7 +25,7 @@ float windowMatrix[16];
 ScreenLogger logger(windowWidth, windowHeight);
 
 // Camera movement speed.
-double move_speed = 0.3;
+double move_speed = 20;
 
 // Examplary objects.
 engine::rectangle ground(100.0f, 100.0f);

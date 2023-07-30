@@ -2,6 +2,7 @@
 
 
 static volatile bool keystates[UCHAR_MAX + 1] = { false };
+static double deltaTime;
 
 inline void move(void)
 {
@@ -12,29 +13,29 @@ inline void move(void)
 		);
 	if (keystates['w'] || keystates['W']) 
 	{
-		cam_pos[0] += torso_dir[0] * move_speed;
-		cam_pos[2] += torso_dir[2] * move_speed;
+		cam_pos[0] += torso_dir[0] * move_speed * deltaTime;
+		cam_pos[2] += torso_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Forward movement");
 	}
 	if (keystates['a'] || keystates['A'])
 	{
-		cam_pos[0] += left_dir[0] * move_speed;
-		cam_pos[2] += left_dir[2] * move_speed;
+		cam_pos[0] += left_dir[0] * move_speed * deltaTime;
+		cam_pos[2] += left_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Left movement");
 	}
 	if (keystates['s'] || keystates['S'])
 	{
-		cam_pos[0] -= torso_dir[0] * move_speed;
-		cam_pos[2] -= torso_dir[2] * move_speed;
+		cam_pos[0] -= torso_dir[0] * move_speed * deltaTime;
+		cam_pos[2] -= torso_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Backwards movement");
 	}
 	if (keystates['d'] || keystates['D'])
 	{
-		cam_pos[0] -= left_dir[0] * move_speed;
-		cam_pos[2] -= left_dir[2] * move_speed;
+		cam_pos[0] -= left_dir[0] * move_speed * deltaTime;
+		cam_pos[2] -= left_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Right movement");
 	}
@@ -42,19 +43,28 @@ inline void move(void)
 
 void display(void)
 {
-	static std::chrono::steady_clock::time_point start;
-	static std::chrono::steady_clock::time_point stop;
-	static std::chrono::duration<double> time;
-
-	if constexpr (LOG_FPS)
-		start = std::chrono::high_resolution_clock::now();
-
+	static auto beginTime = std::chrono::high_resolution_clock::now();
+	static auto currentTime = std::chrono::high_resolution_clock::now();
+	static auto oldTime = std::chrono::high_resolution_clock::now();
+	static std::chrono::duration<double> totalProgramRuntime;
+	static std::chrono::duration<double> dt;
 	static const double aspect_ratio = (double)(windowWidth / windowHeight);
+
+
+	currentTime = std::chrono::high_resolution_clock::now();
+	dt = currentTime - oldTime;
+	deltaTime = dt.count();
 
 	// Escape Button
 	if (keystates[27]) {
 		exit(EXIT_SUCCESS);
 	}
+
+	if constexpr (LOG_ELAPSED_FRAME_TIME)
+		totalProgramRuntime = currentTime - beginTime;
+
+	if constexpr (LOG_ELAPSED_FRAME_TIME)
+		logger.logMessage("Elapsed Time: %.3lfs", totalProgramRuntime.count());
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -110,14 +120,10 @@ void display(void)
 		.spawn(10.0f, 10.0f, 10.0f);
 
 	if constexpr (LOG_FPS)
-	{
-		stop = std::chrono::high_resolution_clock::now();
-		time = stop - start;
-		logger.logFPS(1.0 / time.count());
-	}
+		logger.logFPS(1.0 / deltaTime);
 
 	logger.flushLogBuffer();
-
+	oldTime = currentTime;
 	glutSwapBuffers();
 }
 
