@@ -1,25 +1,69 @@
 #pragma once
 
 
+static volatile bool keystates[UCHAR_MAX + 1] = { false };
+
+inline void move(void)
+{
+	if constexpr (LOG_CAMERA_MOVEMENT)
+		logger.logMessage(
+			"Camera Position: (%.3lf, %.3lf, %.3lf)",
+			cam_pos[0], cam_pos[1], cam_pos[2]
+		);
+	if (keystates['w'] || keystates['W']) 
+	{
+		cam_pos[0] += torso_dir[0] * move_speed;
+		cam_pos[2] += torso_dir[2] * move_speed;
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logger.logMessage("Forward movement");
+	}
+	if (keystates['a'] || keystates['A'])
+	{
+		cam_pos[0] += left_dir[0] * move_speed;
+		cam_pos[2] += left_dir[2] * move_speed;
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logger.logMessage("Left movement");
+	}
+	if (keystates['s'] || keystates['S'])
+	{
+		cam_pos[0] -= torso_dir[0] * move_speed;
+		cam_pos[2] -= torso_dir[2] * move_speed;
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logger.logMessage("Backwards movement");
+	}
+	if (keystates['d'] || keystates['D'])
+	{
+		cam_pos[0] -= left_dir[0] * move_speed;
+		cam_pos[2] -= left_dir[2] * move_speed;
+		if constexpr (LOG_CAMERA_MOVEMENT)
+			logger.logMessage("Right movement");
+	}
+}
+
 void display(void)
 {
 	static std::chrono::steady_clock::time_point start;
 	static std::chrono::steady_clock::time_point stop;
 	static std::chrono::duration<double> time;
-	static float windowMatrix[16];
-
 
 	if constexpr (LOG_FPS)
 		start = std::chrono::high_resolution_clock::now();
 
 	static const double aspect_ratio = (double)(windowWidth / windowHeight);
-	
+
+	// Escape Button
+	if (keystates[27]) {
+		exit(EXIT_SUCCESS);
+	}
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
 	// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
+
+	move();
 
 	gluLookAt(
 		cam_pos[0], cam_pos[1], cam_pos[2],
@@ -57,7 +101,7 @@ void display(void)
 		.spawn(8.0f, 1.0f, -6.0f)
 		.spawn(10.0f, 1.0f, -12.0f)
 		.spawn(9.0f, 1.0f, 15.0f);
-	
+
 	lamp
 		.emission({ 0.2f, 0.2f, 0.0f, 1.0f })
 		.materialv(GL_DIFFUSE, { 1.0f, 1.0f, 0.0f, 1.0f })
@@ -77,39 +121,15 @@ void display(void)
 	glutSwapBuffers();
 }
 
-void keyboard(unsigned char key, int x, int y)
+void keyboardDown(unsigned char key, int x, int y)
 {
-	// Escape key
-	if (key == 27) {
-		exit(EXIT_SUCCESS);
-	}
+	keystates[key] = true;
+	glutPostRedisplay();
+}
 
-	switch (tolower(key)) {
-	case 'w':
-		cam_pos[0] += torso_dir[0] * move_speed;
-		cam_pos[2] += torso_dir[2] * move_speed;
-		if constexpr (LOG_CAMERA_MOVEMENT)
-			logger.logMessage("Forward movement");
-		break;
-	case 'a':
-		cam_pos[0] += left_dir[0] * move_speed;
-		cam_pos[2] += left_dir[2] * move_speed;
-		if constexpr (LOG_CAMERA_MOVEMENT)
-			logger.logMessage("Left movement");
-		break;
-	case 's':
-		cam_pos[0] -= torso_dir[0] * move_speed;
-		cam_pos[2] -= torso_dir[2] * move_speed;
-		if constexpr (LOG_CAMERA_MOVEMENT)
-			logger.logMessage("Backwards movement");
-		break;
-	case 'd':
-		cam_pos[0] -= left_dir[0] * move_speed;
-		cam_pos[2] -= left_dir[2] * move_speed;
-		if constexpr (LOG_CAMERA_MOVEMENT)
-			logger.logMessage("Right movement");
-		break;
-	}
+void keyboardUp(unsigned char key, int x, int y)
+{
+	keystates[key] = false;
 	glutPostRedisplay();
 }
 

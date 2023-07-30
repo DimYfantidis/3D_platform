@@ -13,8 +13,8 @@
 constexpr bool LOG_SHAPES = false;
 constexpr bool LOG_CAMERA_ROTATATION = false;
 constexpr bool LOG_TORSO_ORIENTATION = false;
-constexpr bool LOG_CAMERA_MOVEMENT = false;
-constexpr bool LOG_FPS = false;
+constexpr bool LOG_CAMERA_MOVEMENT = true;
+constexpr bool LOG_FPS = true;
 
 class ScreenLogger
 {

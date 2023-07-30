@@ -89,11 +89,14 @@ int main(int argc, char* argv[])
 	// Hides cursor.
 	glutSetCursor(GLUT_CURSOR_NONE);
 
+	glutIgnoreKeyRepeat(1);
+
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 	glutSpecialFunc(NULL);
 	glutDisplayFunc(display);
 	glutIdleFunc(NULL);
-	glutKeyboardFunc(keyboard);
+	glutKeyboardFunc(keyboardDown);
+	glutKeyboardUpFunc(keyboardUp);
 	glutPassiveMotionFunc(passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
