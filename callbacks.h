@@ -53,6 +53,8 @@ inline void move(void)
 
 void display(void)
 {
+	static vector3f light_pos = { 15.0f, 10.0f, 0.0f };
+	static float light_angle = 0.0f;
 	static auto beginTime = std::chrono::high_resolution_clock::now();
 	static auto currentTime = std::chrono::high_resolution_clock::now();
 	static auto oldTime = std::chrono::high_resolution_clock::now();
@@ -69,6 +71,13 @@ void display(void)
 	if (keystates[27]) {
 		exit(EXIT_SUCCESS);
 	}
+	light_angle = light_angle + 2.0f * (float)deltaTime;
+
+	if (light_angle > 2.0 * M_PI)
+		light_angle = 0.0f;
+	
+	light_pos[0] = 15.0f * cos(light_angle);
+	light_pos[2] = 15.0f * sin(light_angle);
 
 	if constexpr (LOG_ELAPSED_FRAME_TIME)
 		totalProgramRuntime = currentTime - beginTime;
@@ -126,10 +135,13 @@ void display(void)
 		.materialv(GL_DIFFUSE, materials::lamp_diff)
 		.lightv(GL_SPECULAR, materials::light_spec)
 		.lightv(GL_DIFFUSE, materials::light_diff)
-		.spawn(10.0f, 10.0f, 10.0f);
+		.spawn(light_pos);
 
 	if constexpr (LOG_FPS)
 		logger.logFPS(1.0 / deltaTime);
+
+	if constexpr (LOG_SOUNDS)
+		logger.logMessage("Playing Music: lake_wind_ambience.wav");
 
 	logger.flushLogBuffer();
 	oldTime = currentTime;

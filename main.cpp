@@ -4,15 +4,24 @@
 #include <chrono>
 #include <cctype>
 #include <vector>
+#include <thread>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <GL/glut.h>
+#include <Windows.h>
+#include <mmsystem.h>
 
 #include "shapes.h"
 #include "logging.h"
 #include "typedefs.h"
 #include "materials.h"
 #include "rendering.h"
+
+
+// Files and Directories
+std::wstring workingDir;
+std::wstring mainThemeFile;
 
 
 // Window's dimension and info.
@@ -22,6 +31,8 @@ int windowHeight = (FULLSCREEN ? 1440 : 800);
 int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
 int window_menu_id;
 float windowMatrix[16];
+
+bool ambientMusicPlaying;
 
 ScreenLogger logger(windowWidth, windowHeight);
 
@@ -48,6 +59,16 @@ volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
 #include "menu.h"
 
 
+void init_dirs(void)
+{
+	WCHAR buffer[MAX_PATH] = { 0 };
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
+
+	workingDir = std::wstring(buffer).substr(0, pos);
+	mainThemeFile = workingDir + L"\\Music\\lake_wind_ambience.wav";
+}
+
 void init_lists(void) {}
 
 int main(int argc, char* argv[])
@@ -59,6 +80,8 @@ int main(int argc, char* argv[])
 	glutInitWindowPosition(500, 100);
 	glutCreateWindow("3D Platformer");
 
+	init_dirs();
+	
 	if (FULLSCREEN)
 		glutFullScreen();
 
@@ -110,6 +133,7 @@ int main(int argc, char* argv[])
 	glutPassiveMotionFunc(passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
+	PlaySound(mainThemeFile.c_str(), NULL, SND_ASYNC | SND_NODEFAULT);
 	glutMainLoop();
 
 	return EXIT_SUCCESS;

@@ -15,6 +15,7 @@ constexpr bool LOG_CAMERA_ROTATATION = false;
 constexpr bool LOG_TORSO_ORIENTATION = false;
 constexpr bool LOG_CAMERA_MOVEMENT = false;
 constexpr bool LOG_ELAPSED_FRAME_TIME = false;
+constexpr bool LOG_SOUNDS = true;
 constexpr bool LOG_FPS = true;
 
 class ScreenLogger

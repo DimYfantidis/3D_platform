@@ -631,6 +631,9 @@ namespace engine
 			
 			return (*this);
 		}
+		light_source& spawn(const vector3f pos) {
+			return spawn(pos[0], pos[1], pos[2]);
+		}
 
 	private:
 		vector4f m_emission;
