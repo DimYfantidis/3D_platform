@@ -11,6 +11,7 @@
 #include "shapes.h"
 #include "logging.h"
 #include "typedefs.h"
+#include "materials.h"
 #include "rendering.h"
 
 
@@ -42,6 +43,7 @@ volatile vector3d cam_pos = { 0.0, cam_height, 0.0 };
 volatile vector3d torso_dir = { 0.0, 0.0, -1.0 };
 volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
 
+
 #include "callbacks.h"
 #include "menu.h"
 
@@ -61,14 +63,18 @@ int main(int argc, char* argv[])
 		glutFullScreen();
 
 	// Attributes
-	glEnable(GL_DEPTH_TEST);				// Depth Buffer
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);	// Black Background
-	glEnable(GL_LIGHTING);					// Lighting
-	glEnable(GL_LIGHT0);					// Light Source
+	glEnable(GL_DEPTH_TEST);					// Depth Buffer
+	glClearColor(0.05f, 0.12f, 0.20f, 1.0f);	// Night Sky Background
+	glEnable(GL_LIGHTING);						// Lighting
+	glEnable(GL_LIGHT0);						// Light Source
 	glShadeModel(GL_SMOOTH);
 	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
+	glLineWidth(0.1f);
+	glPointSize(0.3f);
+
+	glColor3f(1.0f, 1.0f, 1.0f);
 	// Pre-compiled lists initialization
 	init_lists();
 

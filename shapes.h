@@ -7,6 +7,7 @@
 #include "logging.h"
 #include "typedefs.h"
 #include "geometry.h"
+#include "materials.h"
 
 
 extern ScreenLogger logger;
@@ -24,10 +25,10 @@ namespace engine
 	{
 	public:
 		shape() 
-			: m_color(), m_ambient(), m_specular(), m_diffuse()
+			: m_color{1.0f, 1.0f, 1.0f}, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
 		{}
 		
-		shape(const shape& other)
+		shape(const shape& other) : m_shininess(other.m_shininess)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
 			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
@@ -56,6 +57,10 @@ namespace engine
 			return (*this);
 		}
 
+		shape& shininess(float val) {
+			m_shininess = val;
+		}
+
 		// Sets the material properties.
 		// Acceptanle values for pname are GL_AMBIENT, GL_SPECULAR and GL_DIFFUSE. */
 		shape& materialv(GLenum pname, const vector4f params) 
@@ -80,6 +85,17 @@ namespace engine
 			return materialv(pname, params.data());
 		}
 
+		shape& material(const materials::material& blueprint) 
+		{
+			m_shininess = blueprint.shininess;
+			memmove(m_ambient, blueprint.ambient, sizeof(vector4f));
+			memmove(m_specular, blueprint.specular, sizeof(vector4f));
+			memmove(m_diffuse, blueprint.diffuse, sizeof(vector4f));
+			return (*this);
+		}
+
+		virtual shape& resolution(int val) { return (*this); }
+
 		// Getters
 		const float* color() { return m_color; }
 		const float* ambient() { return m_ambient; }
@@ -94,6 +110,8 @@ namespace engine
 		vector4f m_ambient;
 		vector4f m_specular;
 		vector4f m_diffuse;
+
+		float m_shininess;
 	};
 
 
@@ -102,19 +120,30 @@ namespace engine
 	{
 	public:
 		rectangle(float width, float depth)
-			: shape(), m_width(width), m_depth(depth)
+			: shape(), m_width(width), m_depth(depth), 
+			m_length_poly_count(1), m_dx(width), m_dz(depth)
 		{}
 
 		rectangle(const rectangle& other)
-			: shape(other), m_width(other.m_width), m_depth(other.m_depth)
+			: shape(other), m_width(other.m_width), m_depth(other.m_depth), 
+			m_length_poly_count(1), m_dx(other.m_width), m_dz(other.m_depth)
 		{}
+
+		shape& resolution(int val) override 
+		{
+			m_length_poly_count = val;
+			m_dx = m_width / m_length_poly_count;
+			m_dz = m_depth / m_length_poly_count;
+			return (*this);
+		}
 
 		shape& spawn(float x, float y, float z) override
 		{
 			x -= m_width / 2;
 			z -= m_depth / 2;
 
-			glPushMatrix();
+			float x_begin = x;
+			float z_begin = z;
 
 			if constexpr (LOG_SHAPES)
 				logger.logMessage(
@@ -124,7 +153,9 @@ namespace engine
 					m_color[0], m_color[1], m_color[2]
 				);
 
-			glMaterialf(GL_FRONT, GL_SHININESS, 0.0f);
+			glPushMatrix();
+
+			glMaterialf(GL_FRONT, GL_SHININESS, m_shininess);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
@@ -135,15 +166,27 @@ namespace engine
 			{
 				glNormal3f(0.0f, 1.0f, 0.0f);
 
-				// 1
-				glVertex3f(x, y, z);
-				glVertex3f(x + m_width, y, z + m_depth);
-				glVertex3f(x, y, z + m_depth);
-				
-				// 2
-				glVertex3f(x, y, z);
-				glVertex3f(x + m_width, y, z);
-				glVertex3f(x + m_width, y, z + m_depth);
+				int i, j;
+
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					z = z_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 1
+						glVertex3f(x, y, z);
+						glVertex3f(x, y, z + m_dz);
+						glVertex3f(x + m_dx, y, z + m_dz);
+
+						// 2
+						glVertex3f(x, y, z);
+						glVertex3f(x + m_dx, y, z);
+						glVertex3f(x + m_dx, y, z + m_dz);
+
+						z = z + m_dz;
+					}
+					x = x + m_dx;
+				}
 			}
 			glEnd();
 
@@ -153,6 +196,9 @@ namespace engine
 		}
 
 	private:
+		int m_length_poly_count;
+		float m_dx;
+		float m_dz;
 		float m_width;
 		float m_depth;
 	};
@@ -163,12 +209,24 @@ namespace engine
 	{
 	public:
 		cuboid(float width, float height, float depth)
-			: shape(), m_width(width), m_height(height), m_depth(depth)
+			: shape(), m_width(width), m_height(height), m_depth(depth), 
+			m_length_poly_count(1), m_dx(width), m_dy(height), m_dz(depth)
 		{}
 
 		cuboid(const cuboid& other)
-			: shape(other), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth)
+			: shape(other), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth), 
+			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
+
+
+		shape& resolution(int val) override 
+		{
+			m_length_poly_count = val;
+			m_dx = m_width / m_length_poly_count;
+			m_dy = m_height / m_length_poly_count;
+			m_dz = m_depth / m_length_poly_count;
+			return (*this);
+		}
 
 		shape& spawn(float x, float y, float z) override
 		{
@@ -176,89 +234,171 @@ namespace engine
 			y -= m_height / 2;
 			z -= m_depth / 2;
 
+			float x_begin = x;
+			float y_begin = y;
+			float z_begin = z;
+
 			glPushMatrix();
 
 			if constexpr (LOG_SHAPES)
 				logger.logMessage(
 					"Spawning cuboid at (%.3f, %.3f, %.3f), dim=(%.3f, %.3f, %.3f)", 
 					x, y, z,
-					m_width, m_height, m_depth,
-					m_color[0], m_color[1], m_color[2]
+					m_width, m_height, m_depth
 				);
 
 			glColor3fv(m_color);
+
+			glMaterialf(GL_FRONT, GL_SHININESS, m_shininess);
 			glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
 			glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
 			glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
-
+			
 			// Consists of 6 rectangles(12 triangles).
 			glBegin(GL_TRIANGLES);
 			{
-				glNormal3f(0.0f, 0.0f, 1.0f);
-				// 1
-				glVertex3f(x, y, z);
-				glVertex3f(x + m_width, y, z);
-				glVertex3f(x + m_width, y + m_height, z);
-
-				// 2
-				glVertex3f(x, y, z);
-				glVertex3f(x, y + m_height, z);
-				glVertex3f(x + m_width, y + m_height, z);
-
-				glNormal3f(-1.0f, 0.0f, 0.0f);
-				// 3
-				glVertex3f(x, y, z);
-				glVertex3f(x, y + m_height, z);
-				glVertex3f(x, y + m_height, z + m_depth);
-
-				// 4
-				glVertex3f(x, y, z);
-				glVertex3f(x, y, z + m_depth);
-				glVertex3f(x, y + m_height, z + m_depth);
+				int i, j;
 
 				glNormal3f(0.0f, 0.0f, -1.0f);
-				// 5
-				glVertex3f(x, y + m_height, z);
-				glVertex3f(x, y + m_height, z + m_depth);
-				glVertex3f(x + m_width, y + m_height, z + m_depth);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					y = y_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 1
+						glVertex3f(x, y, z);
+						glVertex3f(x + m_dx, y, z);
+						glVertex3f(x + m_dx, y + m_dy, z);
 
-				// 6
-				glVertex3f(x, y + m_height, z);
-				glVertex3f(x + m_width, y + m_height, z);
-				glVertex3f(x + m_width, y + m_height, z + m_depth);
+						// 2
+						glVertex3f(x, y, z);
+						glVertex3f(x, y + m_dy, z);
+						glVertex3f(x + m_dx, y + m_dy, z);
 
-				glNormal3f(1.0f, 0.0f, 0.0f);
-				// 7
-				glVertex3f(x + m_width, y + m_height, z);
-				glVertex3f(x + m_width, y, z);
-				glVertex3f(x + m_width, y, z + m_depth);
+						y = y + m_dy;
+					}
+					x = x + m_dx;
+				}
+				x = x_begin;
+				y = y_begin;
 
-				// 8
-				glVertex3f(x + m_width, y + m_height, z);
-				glVertex3f(x + m_width, y + m_height, z + m_depth);
-				glVertex3f(x + m_width, y, z + m_depth);
+				glNormal3f(-1.0f, 0.0f, 0.0f);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					y = y_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 3
+						glVertex3f(x, y, z);
+						glVertex3f(x, y + m_dy, z);
+						glVertex3f(x, y + m_dy, z + m_dz);
 
-				glNormal3f(0.0f, -1.0f, 0.0f);
-				// 9
-				glVertex3f(x, y, z);
-				glVertex3f(x, y, z + m_depth);
-				glVertex3f(x + m_width, y, z + m_depth);
+						// 4
+						glVertex3f(x, y, z);
+						glVertex3f(x, y, z + m_dz);
+						glVertex3f(x, y + m_dy, z + m_dz);
 
-				// 10
-				glVertex3f(x, y, z);
-				glVertex3f(x + m_width, y, z);
-				glVertex3f(x + m_width, y, z + m_depth);
+						y = y + m_dy;
+					}
+					z = z + m_dz;
+				}
+				x = x_begin;
+				z = z_begin;
+				y = y_begin + m_height;
 
 				glNormal3f(0.0f, 1.0f, 0.0f);
-				// 11
-				glVertex3f(x, y, z + m_depth);
-				glVertex3f(x, y + m_height, z + m_depth);
-				glVertex3f(x + m_width, y + m_height, z + m_depth);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					z = z_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 5
+						glVertex3f(x, y, z);
+						glVertex3f(x, y, z + m_dz);
+						glVertex3f(x + m_dx, y, z + m_dz);
 
-				// 12
-				glVertex3f(x, y, z + m_depth);
-				glVertex3f(x + m_width, y, z + m_depth);
-				glVertex3f(x + m_width, y + m_height, z + m_depth);
+						// 6
+						glVertex3f(x, y, z);
+						glVertex3f(x + m_dx, y, z);
+						glVertex3f(x + m_dx, y, z + m_dz);
+						
+						z = z + m_dz;
+					}
+					x = x + m_dx;
+				}
+				x = x_begin + m_width;
+				z = z_begin;
+				y = y_begin;
+
+				glNormal3f(1.0f, 0.0f, 0.0f);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					z = z_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 7
+						glVertex3f(x, y + m_dy, z);
+						glVertex3f(x, y, z);
+						glVertex3f(x, y, z + m_dz);
+
+						// 8
+						glVertex3f(x, y + m_dy, z);
+						glVertex3f(x, y + m_dy, z + m_dz);
+						glVertex3f(x, y, z + m_dz);
+
+						z = z + m_dz;
+					}
+					y = y + m_dy;
+				}
+
+				x = x_begin;
+				z = z_begin;
+				y = y_begin;
+
+				glNormal3f(0.0f, -1.0f, 0.0f);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					z = z_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 9
+						glVertex3f(x, y, z);
+						glVertex3f(x, y, z + m_dz);
+						glVertex3f(x + m_dx, y, z + m_dz);
+
+						// 10
+						glVertex3f(x, y, z);
+						glVertex3f(x + m_dx, y, z);
+						glVertex3f(x + m_dx, y, z + m_dz);
+
+						z = z + m_dz;
+					}
+					x = x + m_dx;
+				}
+				x = x_begin;
+				z = z_begin + m_depth;
+				y = y_begin;
+
+				glNormal3f(0.0f, 0.0f, 1.0f);
+				for (i = 0; i < m_length_poly_count; ++i)
+				{
+					y = y_begin;
+					for (j = 0; j < m_length_poly_count; ++j)
+					{
+						// 11
+						glVertex3f(x, y, z);
+						glVertex3f(x, y + m_dy, z);
+						glVertex3f(x + m_dx, y + m_dy, z);
+
+						// 12
+						glVertex3f(x, y, z);
+						glVertex3f(x + m_dx, y, z);
+						glVertex3f(x + m_dx, y + m_dy, z);
+
+						y = y + m_dy;
+					}
+					x = x + m_dx;
+				}
 			}
 			glEnd();
 
@@ -268,26 +408,31 @@ namespace engine
 		}
 
 	private:
+		int m_length_poly_count;
+		float m_dx;
+		float m_dy;
+		float m_dz;
 		float m_width;
 		float m_height;
 		float m_depth;
 	};
 
 
-	// Sphere class. REC_DEPTH represents the depth of the recursive 
-	// subdivision's tree depth. Default value is 4 but can be increased
-	// for larger spheres.
-	template <int REC_DEPTH = 4>
 	class sphere : public shape
 	{
 	public:
 		sphere(float radius)
-			: shape(), m_radius(radius)
+			: shape(), m_radius(radius), m_rec_depth(4)
 		{}
 
 		sphere(const sphere& other)
-			: shape(other), m_radius(other.m_radius)
+			: shape(other), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
+
+		shape& resolution(int val) override {
+			m_rec_depth = val;
+			return (*this);
+		}
 
 		shape& spawn(float x, float y, float z) override 
 		{
@@ -303,6 +448,7 @@ namespace engine
 			{
 				glColor3fv(m_color);
 
+				glMaterialf(GL_FRONT, GL_SHININESS, m_shininess);
 				glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
@@ -315,7 +461,7 @@ namespace engine
 
 				// Recursive subdivision starts with the 
 				// tetrahedron's center at the origin.
-				tetrahedron(REC_DEPTH);
+				tetrahedron(m_rec_depth);
 			}
 			glPopMatrix();
 
@@ -398,6 +544,10 @@ namespace engine
 		}
 
 	private:
+		// m_rec_depth represents the depth of the recursive
+		// subdivision's tree depth. Default value is 4 but can be increased
+		// for larger spheres.
+		int m_rec_depth;
 		float m_radius;
 	};
 
@@ -430,9 +580,12 @@ namespace engine
 			return emission(params.data());
 		}
 
-		light_source& materialv(GLenum pname, const std::array<float, 4>& params) {
+		light_source& materialv(GLenum pname, const vector4f params) {
 			m_cell->materialv(pname, params);
 			return (*this);
+		}
+		light_source& materialv(GLenum pname, const std::array<float, 4>& params) {
+			return materialv(pname, params.data());
 		}
 
 		light_source& lightv(GLenum pname, const vector4f params) 
@@ -461,7 +614,7 @@ namespace engine
 
 		light_source& spawn(float x, float y, float z) 
 		{
-			vector4f position = { x, y, z, 0.0f};
+			vector4f position = { x, y, z, 1.0f};
 
 			glPushMatrix();
 			{

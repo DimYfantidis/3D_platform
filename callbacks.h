@@ -11,33 +11,41 @@ inline void move(void)
 			"Camera Position: (%.3lf, %.3lf, %.3lf)",
 			cam_pos[0], cam_pos[1], cam_pos[2]
 		);
-	if (keystates['w'] || keystates['W']) 
+	if (keystates['w']) 
 	{
 		cam_pos[0] += torso_dir[0] * move_speed * deltaTime;
 		cam_pos[2] += torso_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Forward movement");
 	}
-	if (keystates['a'] || keystates['A'])
+	if (keystates['a'])
 	{
 		cam_pos[0] += left_dir[0] * move_speed * deltaTime;
 		cam_pos[2] += left_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Left movement");
 	}
-	if (keystates['s'] || keystates['S'])
+	if (keystates['s'])
 	{
 		cam_pos[0] -= torso_dir[0] * move_speed * deltaTime;
 		cam_pos[2] -= torso_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Backwards movement");
 	}
-	if (keystates['d'] || keystates['D'])
+	if (keystates['d'])
 	{
 		cam_pos[0] -= left_dir[0] * move_speed * deltaTime;
 		cam_pos[2] -= left_dir[2] * move_speed * deltaTime;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Right movement");
+	}
+	if (keystates[' '])
+	{
+		cam_pos[1] += move_speed * deltaTime;
+	}
+	if (keystates['x'])
+	{
+		cam_pos[1] -= move_speed * deltaTime;
 	}
 }
 
@@ -84,28 +92,27 @@ void display(void)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	cuboid_object
-		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
-		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.spawn(20.0f, 20.0f, 20.0f)
-		.spawn(-20.0f, 20.0f, -20.0f);
 	ground
-		.materialv(GL_AMBIENT, { 0.3f, 1.0f, 0.3f, 0.0f })
-		.materialv(GL_SPECULAR, { 0.0f, 0.0f, 0.0f, 0.0f })
-		.materialv(GL_DIFFUSE, { 0.3f, 1.0f, 0.3f, 0.3f })
+		.materialv(GL_AMBIENT, materials::ground_amb)
+		.materialv(GL_SPECULAR, materials::ground_spec)
+		.materialv(GL_DIFFUSE, materials::ground_diff)
+		.resolution(10)
 		.spawn(0.0f, 0.0f, 0.0f);
 
+	cuboid_object
+		.material(materials::jade)
+		.resolution(10)
+		.spawn(20.0f, 20.0f, 20.0f)
+		.spawn(-20.0f, 20.0f, -20.0f);
+
 	sphere_object
-		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
-		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.material(materials::gold)
+		.resolution(6)
 		.spawn(-20.0f, 30.0f, 0.0f);
 
 	ball
-		.materialv(GL_AMBIENT, { 0.3f, 0.3f, 0.3f, 1.0f })
-		.materialv(GL_SPECULAR, { 1.0f, 1.0f, 1.0f, 1.0f })
-		.materialv(GL_DIFFUSE, { 0.3f, 0.3f, 0.3f, 1.0f })
+		.material(materials::pearl)
+		.resolution(6)
 		.spawn(1.0f, 1.0f, 1.0f)
 		.spawn(3.0f, 1.0f, 7.0f)
 		.spawn(8.0f, 1.0f, -6.0f)
@@ -113,10 +120,10 @@ void display(void)
 		.spawn(9.0f, 1.0f, 15.0f);
 
 	lamp
-		.emission({ 0.2f, 0.2f, 0.0f, 1.0f })
-		.materialv(GL_DIFFUSE, { 1.0f, 1.0f, 0.0f, 1.0f })
-		.lightv(GL_SPECULAR, { 0.8f, 0.8f, 0.8f, 1.0f })
-		.lightv(GL_DIFFUSE, { 0.8f, 0.8f, 0.8f, 1.0f })
+		.emission(materials::lamp_emsn)
+		.materialv(GL_DIFFUSE, materials::lamp_diff)
+		.lightv(GL_SPECULAR, materials::light_spec)
+		.lightv(GL_DIFFUSE, materials::light_diff)
 		.spawn(10.0f, 10.0f, 10.0f);
 
 	if constexpr (LOG_FPS)
@@ -129,12 +136,16 @@ void display(void)
 
 void keyboardDown(unsigned char key, int x, int y)
 {
+	if (isalpha(key))
+		key = tolower(key);
 	keystates[key] = true;
 	glutPostRedisplay();
 }
 
 void keyboardUp(unsigned char key, int x, int y)
 {
+	if (isalpha(key))
+		key = tolower(key);
 	keystates[key] = false;
 	glutPostRedisplay();
 }
