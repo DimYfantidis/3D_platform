@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 	glEnable(GL_LIGHTING);						// Lighting
 	glEnable(GL_LIGHT0);						// Light Source
 	glShadeModel(GL_SMOOTH);
-	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
+	// glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
 	glLineWidth(0.1f);

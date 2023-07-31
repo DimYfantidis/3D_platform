@@ -98,13 +98,14 @@ void display(void)
 		.materialv(GL_AMBIENT, materials::ground_amb)
 		.materialv(GL_SPECULAR, materials::ground_spec)
 		.materialv(GL_DIFFUSE, materials::ground_diff)
-		.resolution(10)
+		.resolution(20)
 		.spawn(0.0f, 0.0f, 0.0f);
 
 	cuboid_object
-		.material(materials::jade)
 		.resolution(10)
+		.material(materials::jade)
 		.spawn(20.0f, 20.0f, 20.0f)
+		.material(materials::gold)
 		.spawn(-20.0f, 20.0f, -20.0f);
 
 	sphere_object
@@ -114,7 +115,6 @@ void display(void)
 
 	ball
 		.material(materials::pearl)
-		.resolution(5)
 		.spawn(1.0f, 1.0f, 1.0f)
 		.spawn(3.0f, 1.0f, 7.0f)
 		.spawn(8.0f, 1.0f, -6.0f)

@@ -59,6 +59,7 @@ namespace engine
 
 		shape& shininess(float val) {
 			m_shininess = val;
+			return (*this);
 		}
 
 		// Sets the material properties.
@@ -448,10 +449,10 @@ namespace engine
 			{
 				glColor3fv(m_color);
 
-				glMaterialf(GL_FRONT, GL_SHININESS, m_shininess);
-				glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
-				glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
-				glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
+				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_ambient);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_specular);
+				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diffuse);
 
 				// The sphere's center is translated to the desired point.
 				glTranslatef(x, y, z);
@@ -459,9 +460,11 @@ namespace engine
 				// Sphere is uniformly scaled to meet its radius.
 				glScalef(m_radius, m_radius, m_radius);
 
+				glEnable(GL_NORMALIZE);
 				// Recursive subdivision starts with the 
 				// tetrahedron's center at the origin.
 				tetrahedron(m_rec_depth);
+				glDisable(GL_NORMALIZE);
 			}
 			glPopMatrix();
 
@@ -507,11 +510,7 @@ namespace engine
 			//Draw final points as polygons onto the unit sphere
 			else
 			{
-				crossProduct(cross,
-					c[0], c[1], c[2],
-					a[0], a[1], a[2],
-					b[0], b[1], b[2]
-				);
+				crossProduct(cross, c, a, b);
 
 				glBegin(GL_TRIANGLES);
 				{
@@ -530,9 +529,9 @@ namespace engine
 			//These values are inverted so the sun moves opposite to its light source
 			point3f v[] = {
 				{-0.0000000f, -0.0000000f, -1.0000000f},
-				{-0.0000000f, -0.9428090f, 0.333333f},
-				{0.816497f, 0.471405f, 0.333333f},
-				{-0.8164970f, 0.471405f, 0.333333f}
+				{-0.0000000f, -0.9428090f, 0.33333300f},
+				{0.81649700f, 0.47140500f, 0.33333300f},
+				{-0.8164970f, 0.47140500f, 0.33333300f}
 			};
 
 			//Take the points of the tetrahedron and divide it into 4 triangles
@@ -620,9 +619,8 @@ namespace engine
 			{
 				//Create sun's materials for color and light
 				glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, m_emission);
-				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0);
 
-				m_cell->spawn(x, y, z);
+				m_cell->shininess(100).spawn(x, y, z);
 
 				//Create light as a directional spotlight
 				glLightfv(m_light_id, GL_POSITION, position);

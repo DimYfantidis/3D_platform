@@ -64,7 +64,7 @@ namespace materials
 	const vector4f ball_diff = { 0.3f, 0.3f, 0.3f, 1.0f };
 
 	const vector4f lamp_emsn = { 0.2f, 0.2f, 0.0f, 1.0f };
-	const vector4f lamp_diff = { 1.0f, 1.0f, 0.0f, 1.0f };
+	const vector4f lamp_diff = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 	const vector4f light_spec = { 0.5f, 0.5f, 0.5f, 1.0f };
 	const vector4f light_diff = { 0.5f, 0.5f, 0.5f, 1.0f };
