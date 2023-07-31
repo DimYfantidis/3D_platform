@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
 	glutPassiveMotionFunc(passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
-	PlaySound(mainThemeFile.c_str(), NULL, SND_ASYNC | SND_NODEFAULT);
+	PlaySound(mainThemeFile.c_str(), NULL, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
 	glutMainLoop();
 
 	return EXIT_SUCCESS;
