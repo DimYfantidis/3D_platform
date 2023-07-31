@@ -24,5 +24,5 @@
 * Fix Lighting (real)
 * Create Skybox
 * Insert Music
-    1. Ambient music
+    1. ~~Ambient music~~
     2. SFX
