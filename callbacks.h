@@ -6,6 +6,8 @@ static double deltaTime;
 
 inline void move(void)
 {
+	double delta_move = move_speed * deltaTime;
+
 	if constexpr (LOG_CAMERA_MOVEMENT)
 		logger.logMessage(
 			"Camera Position: (%.3lf, %.3lf, %.3lf)",
@@ -13,39 +15,39 @@ inline void move(void)
 		);
 	if (keystates['w']) 
 	{
-		cam_pos[0] += torso_dir[0] * move_speed * deltaTime;
-		cam_pos[2] += torso_dir[2] * move_speed * deltaTime;
+		cam_pos[0] += torso_dir[0] * delta_move;
+		cam_pos[2] += torso_dir[2] * delta_move;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Forward movement");
 	}
 	if (keystates['a'])
 	{
-		cam_pos[0] += left_dir[0] * move_speed * deltaTime;
-		cam_pos[2] += left_dir[2] * move_speed * deltaTime;
+		cam_pos[0] += left_dir[0] * delta_move;
+		cam_pos[2] += left_dir[2] * delta_move;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Left movement");
 	}
 	if (keystates['s'])
 	{
-		cam_pos[0] -= torso_dir[0] * move_speed * deltaTime;
-		cam_pos[2] -= torso_dir[2] * move_speed * deltaTime;
+		cam_pos[0] -= torso_dir[0] * delta_move;
+		cam_pos[2] -= torso_dir[2] * delta_move;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Backwards movement");
 	}
 	if (keystates['d'])
 	{
-		cam_pos[0] -= left_dir[0] * move_speed * deltaTime;
-		cam_pos[2] -= left_dir[2] * move_speed * deltaTime;
+		cam_pos[0] -= left_dir[0] * delta_move;
+		cam_pos[2] -= left_dir[2] * delta_move;
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage("Right movement");
 	}
 	if (keystates[' '])
 	{
-		cam_pos[1] += move_speed * deltaTime;
+		cam_pos[1] += delta_move;
 	}
 	if (keystates['x'])
 	{
-		cam_pos[1] -= move_speed * deltaTime;
+		cam_pos[1] -= delta_move;
 	}
 }
 
@@ -106,13 +108,13 @@ void display(void)
 		.spawn(-20.0f, 20.0f, -20.0f);
 
 	sphere_object
-		.material(materials::gold)
+		.material(materials::pearl)
 		.resolution(6)
 		.spawn(-20.0f, 30.0f, 0.0f);
 
 	ball
 		.material(materials::pearl)
-		.resolution(6)
+		.resolution(5)
 		.spawn(1.0f, 1.0f, 1.0f)
 		.spawn(3.0f, 1.0f, 7.0f)
 		.spawn(8.0f, 1.0f, -6.0f)
@@ -166,7 +168,9 @@ void passiveMotion(int x, int y)
 	int dx = x_prev - x;
 	int dy = y_prev - y;
 
-	horizontal_angle += dx * step * deltaTime;
+	double delta_step = step * deltaTime;
+
+	horizontal_angle += dx * delta_step;
 
 	if (horizontal_angle < -M_PI) {
 		horizontal_angle += 2 * M_PI;
@@ -174,8 +178,8 @@ void passiveMotion(int x, int y)
 	else if (horizontal_angle > M_PI) {
 		horizontal_angle -= 2 * M_PI;
 	}
-	if (sgn(dy) != sgn(vertical_angle) || abs(vertical_angle) < M_PI_2) {
-		vertical_angle += dy * step * deltaTime;
+	if (sgn(dy) != sgn(vertical_angle) || abs(vertical_angle) < M_PI_2 - 0.2 * step) {
+		vertical_angle += dy * delta_step;
 	}
 	if (abs(vertical_angle) > M_PI_2) {
 		vertical_angle = sgn(vertical_angle) * M_PI_2;
