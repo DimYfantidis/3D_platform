@@ -90,7 +90,7 @@ void display(void)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(90.0, aspect_ratio, 0.1, 100.0);
+	gluPerspective(90.0, aspect_ratio, 0.1, 150.0);
 	// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
 	move();

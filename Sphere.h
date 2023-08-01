@@ -35,10 +35,10 @@ namespace engine
 			{
 				glColor3fv(m_color);
 
-				glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, m_shininess);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, m_ambient);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, m_specular);
-				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, m_diffuse);
+				glMaterialf(GL_FRONT, GL_SHININESS, m_shininess);
+				glMaterialfv(GL_FRONT, GL_AMBIENT, m_ambient);
+				glMaterialfv(GL_FRONT, GL_SPECULAR, m_specular);
+				glMaterialfv(GL_FRONT, GL_DIFFUSE, m_diffuse);
 
 				// The sphere's center is translated to the desired point.
 				glTranslatef(x, y, z);
