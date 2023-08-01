@@ -1,6 +1,8 @@
 # 3D_platform
 3D platform parkour
 
+![screenshot](https://github.com/DimYfantidis/3D_platform/assets/72493069/24ace5fa-2c46-450e-86be-5562a3a67ed2)
+
 **TODO**:
 * Create Camera inside an invisible cube
     1. Create invisible body
