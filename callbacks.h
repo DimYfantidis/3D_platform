@@ -53,7 +53,8 @@ inline void move(void)
 
 void display(void)
 {
-	static vector3f light_pos = { 15.0f, 10.0f, 0.0f };
+	constexpr float light_radius = 15.0f;
+	static vector3f light_pos = { light_radius, 10.0f, 0.0f };
 	static float light_angle = 0.0f;
 	static auto beginTime = std::chrono::high_resolution_clock::now();
 	static auto currentTime = std::chrono::high_resolution_clock::now();
@@ -76,8 +77,8 @@ void display(void)
 	if (light_angle > 2.0 * M_PI)
 		light_angle = 0.0f;
 	
-	light_pos[0] = 15.0f * cos(light_angle);
-	light_pos[2] = 15.0f * sin(light_angle);
+	light_pos[0] = light_radius * cos(light_angle);
+	light_pos[2] = light_radius * sin(light_angle);
 
 	if constexpr (LOG_ELAPSED_FRAME_TIME)
 		totalProgramRuntime = currentTime - beginTime;
@@ -118,8 +119,8 @@ void display(void)
 		.spawn(-20.0f, 20.0f, -20.0f);
 
 	sphere_object
-		.material(materials::pearl)
 		.resolution(6)
+		.material(materials::pearl)
 		.spawn(-20.0f, 30.0f, 0.0f);
 
 	ball

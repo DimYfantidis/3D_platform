@@ -74,7 +74,7 @@ public:
 		{
 			engine::renderString(
 				10.0f, (float)m_height - 20.0f - i * 17.0f, 
-				GLUT_BITMAP_9_BY_15, info.c_str(), info_color
+				GLUT_BITMAP_9_BY_15, info.data(), info_color
 			);
 			i++;
 		}
@@ -82,7 +82,7 @@ public:
 		{
 			engine::renderString(
 				10.0f, 20.0f + j * 17.0f,
-				GLUT_BITMAP_9_BY_15, warning.c_str(), warning_color
+				GLUT_BITMAP_9_BY_15, warning.data(), warning_color
 			);
 			j++;
 		}

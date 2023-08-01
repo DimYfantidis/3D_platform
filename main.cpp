@@ -12,11 +12,16 @@
 #include <Windows.h>
 #include <mmsystem.h>
 
-#include "shapes.h"
+#include "Shape.h"
+#include "Sphere.h"
+#include "Rectangle.h"
+#include "Cuboid.h"
+#include "LightSource.h"
 #include "logging.h"
 #include "typedefs.h"
 #include "materials.h"
 #include "rendering.h"
+#include "display_lists.h"
 
 
 // Files and Directories
@@ -40,12 +45,12 @@ ScreenLogger logger(windowWidth, windowHeight);
 double move_speed = 20;
 
 // Examplary objects.
-engine::rectangle ground(100.0f, 100.0f);
-engine::cuboid cuboid_object(8.0f, 8.0f, 8.0f);
-engine::sphere sphere_object(10.0f);
-engine::sphere ball(0.5f);
+engine::Rectangle ground(100.0f, 100.0f);
+engine::Cuboid cuboid_object(8.0f, 8.0f, 8.0f);
+engine::Sphere sphere_object(10.0f);
+engine::Sphere ball(0.5f);
 
-engine::light_source lamp(GL_LIGHT0);
+engine::LightSource lamp(GL_LIGHT0);
 
 double cam_height = 1.7;
 
@@ -54,12 +59,10 @@ volatile vector3d cam_pos = { 0.0, cam_height, 0.0 };
 volatile vector3d torso_dir = { 0.0, 0.0, -1.0 };
 volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
 
-
 #include "callbacks.h"
 #include "menu.h"
 
-
-void init_dirs(void)
+void initDirectories(void)
 {
 	WCHAR buffer[MAX_PATH] = { 0 };
 	GetModuleFileName(NULL, buffer, MAX_PATH);
@@ -68,8 +71,6 @@ void init_dirs(void)
 	workingDir = std::wstring(buffer).substr(0, pos);
 	mainThemeFile = workingDir + L"\\Music\\lake_wind_ambience.wav";
 }
-
-void init_lists(void) {}
 
 int main(int argc, char* argv[])
 {
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
 	glutInitWindowPosition(500, 100);
 	glutCreateWindow("3D Platformer");
 
-	init_dirs();
+	initDirectories();
 	
 	if (FULLSCREEN)
 		glutFullScreen();
@@ -91,7 +92,7 @@ int main(int argc, char* argv[])
 	glEnable(GL_LIGHTING);						// Lighting
 	glEnable(GL_LIGHT0);						// Light Source
 	glShadeModel(GL_SMOOTH);
-	// glEnable(GL_NORMALIZE);				// Normals Preservation for units
+	//glEnable(GL_NORMALIZE);				// Normals Preservation for units
 	//glEnable(GL_COLOR_MATERIAL);			// Make glColorf() as Material
 
 	glLineWidth(0.1f);
@@ -99,7 +100,7 @@ int main(int argc, char* argv[])
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	// Pre-compiled lists initialization
-	init_lists();
+	initDisplayLists();
 
 	// Window menu
 	create_window_menu();
@@ -121,8 +122,8 @@ int main(int argc, char* argv[])
 	glutWarpPointer(windowCenter[0], windowCenter[1]);
 	// Hides cursor.
 	glutSetCursor(GLUT_CURSOR_NONE);
-
-	glutIgnoreKeyRepeat(1);
+	// Ignores prolonged push of a key.
+	glutIgnoreKeyRepeat(TRUE);
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 	glutSpecialFunc(NULL);
@@ -133,7 +134,7 @@ int main(int argc, char* argv[])
 	glutPassiveMotionFunc(passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
-	PlaySound(mainThemeFile.c_str(), NULL, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
+	PlaySound(mainThemeFile.data(), NULL, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
 	glutMainLoop();
 
 	return EXIT_SUCCESS;
