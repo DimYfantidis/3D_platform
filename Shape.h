@@ -24,16 +24,25 @@ namespace engine
 	{
 	public:
 		shape()
-			: WorldObject(), m_color{ 1.0f, 1.0f, 1.0f }, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
+			: WorldObject(), m_color{1.0f, 1.0f, 1.0f}, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
 		{}
 
-		shape(const shape& other) : m_shininess(other.m_shininess)
+		shape(const shape& other) : WorldObject(other), m_shininess(other.m_shininess)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
 			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
 			memmove(this->m_specular, other.m_specular, sizeof(vector4f));
 			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
 		}
+
+		shape(shape&& other) : WorldObject(std::move(other)), m_shininess(other.m_shininess)
+		{
+			memmove(this->m_color, other.m_color, sizeof(vector3f));
+			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
+			memmove(this->m_specular, other.m_specular, sizeof(vector4f));
+			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
+		}
+
 
 		// Spawns the object with its center at the given point.
 		// Implementation is done by the derived classes.
@@ -87,7 +96,7 @@ namespace engine
 			return materialv(pname, params.data());
 		}
 
-		shape& material(const materials::material& blueprint)
+		shape& Material(const materials::Material& blueprint)
 		{
 			m_shininess = blueprint.shininess;
 			memmove(m_ambient, blueprint.ambient, sizeof(vector4f));

@@ -19,13 +19,6 @@ namespace engine
 			m_length_poly_count(1), m_dx(other.m_width), m_dz(other.m_depth)
 		{}
 
-		~Rectangle() 
-		{
-			for (auto AABB : CBlist) {
-				delete AABB;
-			}
-		}
-
 		shape& resolution(int val) override
 		{
 			m_length_poly_count = val;

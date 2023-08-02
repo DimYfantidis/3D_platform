@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+#include <cstddef>
 #include <GL/glut.h>
 
 
@@ -8,10 +10,30 @@ namespace engine
 	class WorldObject
 	{
 	public:
-		WorldObject() : CBlist() {}
+		inline static volatile size_t instanceCount = 0;
+
+		WorldObject() : CBlist() { instanceCount++; }
+
+		WorldObject(const WorldObject& other): CBlist(other.CBlist.size(), nullptr) 
+		{
+			instanceCount++;
+			for (size_t i = 0; i < CBlist.size(); ++i) {
+				CBlist[i] = new CollisionBox(*other.CBlist[i]);
+			}
+		}
+
+		WorldObject(WorldObject&& other): CBlist(std::move(other.CBlist)) {}
+
+		~WorldObject()
+		{
+			instanceCount--;
+			for (auto AABB : CBlist) {
+				delete AABB;
+			}
+		}
 
 	public:
-		struct CollisionBox 
+		struct CollisionBox
 		{
 			float x1;
 			float y1;
@@ -21,13 +43,25 @@ namespace engine
 			float y2;
 			float z2;
 
-			void draw() 
+			CollisionBox() = default;
+
+			CollisionBox(const CollisionBox& other) : 
+				x1(other.x1), y1(other.y1), z1(other.z1), 
+				x2(other.x2), y2(other.y2), z2(other.z2)
+			{}
+
+			~CollisionBox() = default;
+
+			void draw()
 			{
-				static float color[4] = {1.0f, 0.0f, 0.0f, 0.0f};
-
+				static float color[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+				
 				glPushMatrix();
+				glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-				glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, color);
+				glDisable(GL_LIGHTING);
+				glLineWidth(3.0f);
+				glColor4fv(color);
 
 				glBegin(GL_LINE_LOOP);
 				{
@@ -58,11 +92,11 @@ namespace engine
 				}
 				glEnd();
 
+				glPopAttrib();
 				glPopMatrix();
 			}
 		};
 
-	public:
 		virtual WorldObject& createCollisionBox(float x, float y, float z) { return (*this); }
 
 		virtual WorldObject& showCollisionBox() 

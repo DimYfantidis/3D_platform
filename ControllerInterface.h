@@ -52,12 +52,15 @@ public:
 
 		cuboid_object
 			.resolution(10)
-			.material(materials::jade);
+			.Material(materials::jade)
+			.createCollisionBox(20.0f, 20.0f, 20.0f)
+			.createCollisionBox(-20.0f, 20.0f, -20.0f);;
 
 		sphere_object
 			.resolution(6)
-			.material(materials::pearl);
-		ball.material(materials::pearl);
+			.Material(materials::pearl);
+
+		ball.Material(materials::pearl);
 
 		player.createCollisionBox(0.0f, 0.0f, 0.0f);
 	}
@@ -65,8 +68,6 @@ public:
 	static void movePlayer(void)
 	{
 		double delta_move = player.move_speed * deltaTime;
-		static vector3d old_cam_pos = { 0.0, 1.7, 0.0 };
-
 
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage(
@@ -110,18 +111,10 @@ public:
 			player.cam_pos[1] -= delta_move;
 		}
 
-		if (collisionCheck(player, ground)) 
+		if (collisionCheck(player, ground) || collisionCheck(player, cuboid_object)) 
 		{
 			if constexpr (LOG_COLLISIONS)
 				logger.logWarning("WARNING: Collision Detected");
-			player.cam_pos[0] = old_cam_pos[0];
-			player.cam_pos[1] = old_cam_pos[1];
-			player.cam_pos[2] = old_cam_pos[2];
-		}
-		else {
-			old_cam_pos[0] = player.cam_pos[0];
-			old_cam_pos[1] = player.cam_pos[1];
-			old_cam_pos[2] = player.cam_pos[2];
 		}
 	}
 
@@ -202,6 +195,7 @@ public:
 		{
 			player.showCollisionBox();
 			ground.showCollisionBox();
+			cuboid_object.showCollisionBox();
 		}
 
 		glMatrixMode(GL_MODELVIEW);

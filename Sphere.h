@@ -15,6 +15,9 @@ namespace engine
 		Sphere(const Sphere& other)
 			: shape(other), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
+		Sphere(Sphere&& other)
+			: shape(std::move(other)), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
+		{}
 
 		shape& resolution(int val) override {
 			m_rec_depth = val;

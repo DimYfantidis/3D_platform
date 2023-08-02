@@ -19,6 +19,11 @@ namespace engine
 			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
 
+		Cuboid(Cuboid&& other)
+			: shape(std::move(other)), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
+			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
+		{}
+
 
 		shape& resolution(int val) override
 		{
@@ -185,6 +190,24 @@ namespace engine
 			glPopMatrix();
 
 			return (*this);
+		}
+
+		WorldObject& createCollisionBox(float x, float y, float z) override 
+		{
+			auto* AABB = new CollisionBox;
+
+			AABB->x1 = x - m_width / 2;
+			AABB->x2 = AABB->x1 + m_width;
+
+			AABB->y1 = y - m_height / 2;
+			AABB->y2 = AABB->y1 + m_height;
+
+			AABB->z1 = z - m_depth / 2;
+			AABB->z2 = AABB->z1 + m_depth;
+
+			CBlist.push_back(AABB);
+
+			return (*this); 
 		}
 
 	private:
