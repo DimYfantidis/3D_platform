@@ -100,5 +100,7 @@ namespace engine
 
 		GLenum m_light_id;
 		shape* m_cell;
+
+		inline static ScreenLogger& logger = ScreenLogger::getInstance();
 	};
 }

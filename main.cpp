@@ -22,45 +22,13 @@
 #include "materials.h"
 #include "rendering.h"
 #include "display_lists.h"
+#include "globals.h"
+#include "ControllerInterface.h"
 
 
-// Files and Directories
-std::wstring workingDir;
-std::wstring mainThemeFile;
-
-
-// Window's dimension and info.
-bool FULLSCREEN = true;
-int windowWidth = (FULLSCREEN ? 2560 : 1000);
-int windowHeight = (FULLSCREEN ? 1440 : 800);
-int windowCenter[2] = { windowWidth / 2, windowHeight / 2 };
-int window_menu_id;
-float windowMatrix[16];
-
-bool ambientMusicPlaying;
-
-ScreenLogger logger(windowWidth, windowHeight);
-
-// Camera movement speed.
-double move_speed = 20;
-
-// Examplary objects.
-engine::Rectangle ground(100.0f, 100.0f);
-engine::Cuboid cuboid_object(8.0f, 8.0f, 8.0f);
-engine::Sphere sphere_object(10.0f);
-engine::Sphere ball(0.5f);
-
-engine::LightSource lamp(GL_LIGHT0);
-
-double cam_height = 1.7;
-
-volatile vector3d cam_dir = { 0.0, 0.0, -1.0 };
-volatile vector3d cam_pos = { 0.0, cam_height, 0.0 };
-volatile vector3d torso_dir = { 0.0, 0.0, -1.0 };
-volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
-
-#include "callbacks.h"
+//#include "callbacks.h"
 #include "menu.h"
+
 
 void initDirectories(void)
 {
@@ -80,6 +48,8 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(windowWidth, windowHeight);
 	glutInitWindowPosition(500, 100);
 	glutCreateWindow("3D Platformer");
+
+	ScreenLogger::getInstance().setDimensions(windowWidth, windowHeight);
 
 	initDirectories();
 	
@@ -126,15 +96,15 @@ int main(int argc, char* argv[])
 	glutIgnoreKeyRepeat(TRUE);
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
-	glutSpecialFunc(NULL);
-	glutDisplayFunc(display);
-	glutIdleFunc(NULL);
-	glutKeyboardFunc(keyboardDown);
-	glutKeyboardUpFunc(keyboardUp);
-	glutPassiveMotionFunc(passiveMotion);
+	glutSpecialFunc(nullptr);
+	glutDisplayFunc(ControllerInterface::display);
+	glutIdleFunc(nullptr);
+	glutKeyboardFunc(ControllerInterface::keyboardDown);
+	glutKeyboardUpFunc(ControllerInterface::keyboardUp);
+	glutPassiveMotionFunc(ControllerInterface::passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
-	PlaySound(mainThemeFile.data(), NULL, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
+	PlaySound(mainThemeFile.data(), nullptr, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
 	glutMainLoop();
 
 	return EXIT_SUCCESS;

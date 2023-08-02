@@ -21,10 +21,17 @@ constexpr bool LOG_FPS = true;
 class ScreenLogger
 {
 public:
-	ScreenLogger(int scrWidth, int scrHeight)
-		: m_width(scrWidth), m_height(scrHeight),
-		m_info_buffer(), m_warning_buffer(), m_line(), m_fps()
-	{}
+	static ScreenLogger& getInstance()
+	{
+		static ScreenLogger instance;
+		return instance;
+	}
+
+	void setDimensions(int scrWidth, int scrHeight) 
+	{
+		m_width = scrWidth;
+		m_height = scrHeight;
+	}
 
 	void logMessage(const char* format...)
 	{
@@ -89,6 +96,10 @@ public:
 		m_info_buffer.clear();
 		m_warning_buffer.clear();
 	}
+private:
+	ScreenLogger()
+		: m_width(), m_height(), m_info_buffer(), m_warning_buffer(), m_line(), m_fps()
+	{}
 
 private:
 	int m_width;
