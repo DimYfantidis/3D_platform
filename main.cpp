@@ -17,7 +17,7 @@
 #include "Rectangle.h"
 #include "Cuboid.h"
 #include "LightSource.h"
-#include "logging.h"
+#include "ScreenLogger.h"
 #include "typedefs.h"
 #include "materials.h"
 #include "rendering.h"

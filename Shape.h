@@ -4,7 +4,7 @@
 #include <iostream>
 #include <GL/glut.h>
 
-#include "logging.h"
+#include "ScreenLogger.h"
 #include "typedefs.h"
 #include "geometry.h"
 #include "materials.h"

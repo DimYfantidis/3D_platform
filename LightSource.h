@@ -4,6 +4,7 @@
 #include "Sphere.h"
 #include "Cuboid.h"
 
+#include "ScreenLogger.h"
 
 namespace engine 
 {

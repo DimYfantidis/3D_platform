@@ -12,7 +12,7 @@
 #include "Rectangle.h"
 #include "Cuboid.h"
 #include "LightSource.h"
-#include "logging.h"
+#include "ScreenLogger.h"
 #include "materials.h"
 #include "globals.h"
 
@@ -92,26 +92,10 @@ public:
 		}
 	}
 
-	static void menuDisplay(void)
-	{
-
-	}
-
-	static void check_menu(void)
-	{
-		if (keystates[27])
-		{
-			glutDisplayFunc(menuDisplay);
-			glutKeyboardFunc(nullptr);
-			glutKeyboardUpFunc(nullptr);
-			glutPassiveMotionFunc(nullptr);
-		}
-	}
-
 	static void display(void)
 	{
-		constexpr float light_radius = 15.0f;
-		static vector3f light_pos = { light_radius, 10.0f, 0.0f };
+		constexpr float light_radius = 40.0f;
+		static vector3f light_pos = { light_radius, 30.0f, 0.0f };
 		static float light_angle = 0.0f;
 		static auto beginTime = std::chrono::high_resolution_clock::now();
 		static auto currentTime = std::chrono::high_resolution_clock::now();
@@ -120,13 +104,14 @@ public:
 		static std::chrono::duration<double> dt;
 		static const double aspect_ratio = (double)(windowWidth / windowHeight);
 
-
 		currentTime = std::chrono::high_resolution_clock::now();
 		dt = currentTime - oldTime;
 		deltaTime = dt.count();
 
 		// Escape Button
-		// check_menu();
+		if (keystates[27]) {
+			exit(EXIT_SUCCESS);
+		}
 
 		light_angle = light_angle + 2.0f * (float)deltaTime;
 
