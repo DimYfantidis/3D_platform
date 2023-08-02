@@ -95,6 +95,8 @@ int main(int argc, char* argv[])
 	// Ignores prolonged push of a key.
 	glutIgnoreKeyRepeat(TRUE);
 
+	ControllerInterface::initializeWorld();
+
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
 	glutSpecialFunc(nullptr);
 	glutDisplayFunc(ControllerInterface::display);

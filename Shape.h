@@ -4,10 +4,12 @@
 #include <iostream>
 #include <GL/glut.h>
 
+#include "WorldObject.h"
 #include "ScreenLogger.h"
 #include "typedefs.h"
 #include "geometry.h"
 #include "materials.h"
+
 
 namespace engine
 {
@@ -18,11 +20,11 @@ namespace engine
 	*		- Sphere (3D)
 	*	Methods return shape& for chaining reasons.
 	*/
-	class shape
+	class shape : public WorldObject
 	{
 	public:
 		shape()
-			: m_color{ 1.0f, 1.0f, 1.0f }, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
+			: WorldObject(), m_color{ 1.0f, 1.0f, 1.0f }, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
 		{}
 
 		shape(const shape& other) : m_shininess(other.m_shininess)

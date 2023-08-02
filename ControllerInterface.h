@@ -7,6 +7,8 @@
 #include <climits>
 #include <GL/glut.h>
 
+#include "Player.h"
+#include "WorldObject.h"
 #include "Shape.h"
 #include "Sphere.h"
 #include "Rectangle.h"
@@ -30,72 +32,125 @@ class ControllerInterface
 private:
 	inline static ScreenLogger& logger = ScreenLogger::getInstance();
 
+	inline static engine::Player& player = engine::Player::getInstance();
+
 	inline static bool keystates[UCHAR_MAX + 1] = { false };
 
 	inline static double deltaTime;
 
-	inline static double move_speed = 20.0;
-	inline static double cam_height = 1.7;
-
-	inline static volatile vector3d cam_dir = { 0.0, 0.0, -1.0 };
-	inline static volatile vector3d cam_pos = { 0.0, cam_height, 0.0 };
-	inline static volatile vector3d torso_dir = { 0.0, 0.0, -1.0 };
-	inline static volatile vector3d left_dir = { -1.0, 0.0, 0.0 };
-
 public:
 	ControllerInterface() = delete;
 
-	static void move(void)
+	static void initializeWorld()
 	{
-		double delta_move = move_speed * deltaTime;
+		ground
+			.materialv(GL_AMBIENT, materials::ground_amb)
+			.materialv(GL_SPECULAR, materials::ground_spec)
+			.materialv(GL_DIFFUSE, materials::ground_diff)
+			.resolution(20)
+			.createCollisionBox(0.0f, 0.0f, 0.0f);
+
+		cuboid_object
+			.resolution(10)
+			.material(materials::jade);
+
+		sphere_object
+			.resolution(6)
+			.material(materials::pearl);
+		ball.material(materials::pearl);
+
+		player.createCollisionBox(0.0f, 0.0f, 0.0f);
+	}
+
+	static void movePlayer(void)
+	{
+		double delta_move = player.move_speed * deltaTime;
+		static vector3d old_cam_pos = { 0.0, 1.7, 0.0 };
+
 
 		if constexpr (LOG_CAMERA_MOVEMENT)
 			logger.logMessage(
 				"Camera Position: (%.3lf, %.3lf, %.3lf)",
-				cam_pos[0], cam_pos[1], cam_pos[2]
+				player.cam_pos[0], player.cam_pos[1], player.cam_pos[2]
 			);
 		if (keystates['w'])
 		{
-			cam_pos[0] += torso_dir[0] * delta_move;
-			cam_pos[2] += torso_dir[2] * delta_move;
+			player.cam_pos[0] += player.torso_dir[0] * delta_move;
+			player.cam_pos[2] += player.torso_dir[2] * delta_move;
 			if constexpr (LOG_CAMERA_MOVEMENT)
 				logger.logMessage("Forward movement");
 		}
 		if (keystates['a'])
 		{
-			cam_pos[0] += left_dir[0] * delta_move;
-			cam_pos[2] += left_dir[2] * delta_move;
+			player.cam_pos[0] += player.left_dir[0] * delta_move;
+			player.cam_pos[2] += player.left_dir[2] * delta_move;
 			if constexpr (LOG_CAMERA_MOVEMENT)
 				logger.logMessage("Left movement");
 		}
 		if (keystates['s'])
 		{
-			cam_pos[0] -= torso_dir[0] * delta_move;
-			cam_pos[2] -= torso_dir[2] * delta_move;
+			player.cam_pos[0] -= player.torso_dir[0] * delta_move;
+			player.cam_pos[2] -= player.torso_dir[2] * delta_move;
 			if constexpr (LOG_CAMERA_MOVEMENT)
 				logger.logMessage("Backwards movement");
 		}
 		if (keystates['d'])
 		{
-			cam_pos[0] -= left_dir[0] * delta_move;
-			cam_pos[2] -= left_dir[2] * delta_move;
+			player.cam_pos[0] -= player.left_dir[0] * delta_move;
+			player.cam_pos[2] -= player.left_dir[2] * delta_move;
 			if constexpr (LOG_CAMERA_MOVEMENT)
 				logger.logMessage("Right movement");
 		}
 		if (keystates[' '])
 		{
-			cam_pos[1] += delta_move;
+			player.cam_pos[1] += delta_move;
 		}
 		if (keystates['x'])
 		{
-			cam_pos[1] -= delta_move;
+			player.cam_pos[1] -= delta_move;
 		}
+
+		if (collisionCheck(player, ground)) 
+		{
+			if constexpr (LOG_COLLISIONS)
+				logger.logWarning("WARNING: Collision Detected");
+			player.cam_pos[0] = old_cam_pos[0];
+			player.cam_pos[1] = old_cam_pos[1];
+			player.cam_pos[2] = old_cam_pos[2];
+		}
+		else {
+			old_cam_pos[0] = player.cam_pos[0];
+			old_cam_pos[1] = player.cam_pos[1];
+			old_cam_pos[2] = player.cam_pos[2];
+		}
+	}
+
+	static bool collisionCheck(const engine::WorldObject& one, const engine::WorldObject& two)
+	{
+		bool collisionX;
+		bool collisionY;
+		bool collisionZ;
+
+		for (auto bb_one : one.getCollisionList())
+		{
+			for (auto bb_two : two.getCollisionList())
+			{
+				collisionX = (bb_one->x2 >= bb_two->x1) && (bb_two->x2 >= bb_one->x1);
+				collisionY = (bb_one->y2 >= bb_two->y1) && (bb_two->y2 >= bb_one->y1);
+				collisionZ = (bb_one->z2 >= bb_two->z1) && (bb_two->z2 >= bb_one->z1);
+
+				if (collisionX && collisionY && collisionZ) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	static void display(void)
 	{
-		constexpr float light_radius = 40.0f;
-		static vector3f light_pos = { light_radius, 30.0f, 0.0f };
+		constexpr float light_radius = 15.0f;
+		static vector3f light_pos = { light_radius, 10.0f, 0.0f };
 		static float light_angle = 0.0f;
 		static auto beginTime = std::chrono::high_resolution_clock::now();
 		static auto currentTime = std::chrono::high_resolution_clock::now();
@@ -132,42 +187,36 @@ public:
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		gluPerspective(90.0, aspect_ratio, 0.1, 150.0);
-		// glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
+		//glOrtho(-60.0, 60.0, -60.0, 60.0, -300.0, 300.0);
 
-		move();
+		movePlayer();
 
 		gluLookAt(
-			cam_pos[0], cam_pos[1], cam_pos[2],
-			cam_pos[0] + cam_dir[0], cam_pos[1] + cam_dir[1], cam_pos[2] + cam_dir[2],
+			player.cam_pos[0], player.cam_pos[1], player.cam_pos[2],
+			player.cam_pos[0] + player.cam_dir[0], player.cam_pos[1] + player.cam_dir[1], player.cam_pos[2] + player.cam_dir[2],
 			0.0, 1.0, 0.0
 		);
+		player.updateCollisionBox();
+
+		if (LOG_COLLISIONS)
+		{
+			player.showCollisionBox();
+			ground.showCollisionBox();
+		}
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		ground
-			.materialv(GL_AMBIENT, materials::ground_amb)
-			.materialv(GL_SPECULAR, materials::ground_spec)
-			.materialv(GL_DIFFUSE, materials::ground_diff)
-			.resolution(20)
-			.spawn(0.0f, 0.0f, 0.0f);
+		ground.spawn(0.0f, 0.0f, 0.0f);
 
 		cuboid_object
-			.resolution(10)
-			.material(materials::jade)
 			.spawn(20.0f, 20.0f, 20.0f)
-			.material(materials::gold)
 			.spawn(-20.0f, 20.0f, -20.0f);
 
-
 		sphere_object
-			.resolution(6)
-			.material(materials::pearl)
 			.spawn(-20.0f, 30.0f, 0.0f);
 
-
 		ball
-			.material(materials::pearl)
 			.spawn(1.0f, 1.0f, 1.0f)
 			.spawn(3.0f, 1.0f, 7.0f)
 			.spawn(8.0f, 1.0f, -6.0f)
@@ -245,33 +294,33 @@ public:
 		double cos_vert = cos(vertical_angle);
 		double cos_horz = cos(horizontal_angle);
 
-		cam_dir[0] = cos_vert * sin_horz;
-		cam_dir[1] = sin_vert;
-		cam_dir[2] = cos_vert * cos_horz;
+		player.cam_dir[0] = cos_vert * sin_horz;
+		player.cam_dir[1] = sin_vert;
+		player.cam_dir[2] = cos_vert * cos_horz;
 
-		torso_dir[0] = sin_horz;
-		torso_dir[2] = cos_horz;
+		player.torso_dir[0] = sin_horz;
+		player.torso_dir[2] = cos_horz;
 
-		left_dir[0] = cos_horz;
-		left_dir[2] = -sin_horz;
+		player.left_dir[0] = cos_horz;
+		player.left_dir[2] = -sin_horz;
 
 		if constexpr (LOG_TORSO_ORIENTATION)
 		{
 			logger.logMessage("Body Orientation:");
 			logger.logMessage(
 				"> Torso: (%.3lf, %.3lf, %.3lf)",
-				torso_dir[0], torso_dir[1], torso_dir[2]
+				player.torso_dir[0], player.torso_dir[1], player.torso_dir[2]
 			);
 			logger.logMessage(
 				"> Left:  (%.3lf, %.3lf, %.3lf)",
-				left_dir[0], left_dir[1], left_dir[2]
+				player.left_dir[0], player.left_dir[1], player.left_dir[2]
 			);
 		}
 
 		if constexpr (LOG_CAMERA_ROTATATION)
 			logger.logMessage(
 				"Camera Orientation: (%.3lf, %.3lf, %.3lf)",
-				cam_dir[0], cam_dir[1], cam_dir[2]
+				player.cam_dir[0], player.cam_dir[1], player.cam_dir[2]
 			);
 
 		// Returns mouse to the center of the window.

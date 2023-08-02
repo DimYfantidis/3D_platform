@@ -19,6 +19,13 @@ namespace engine
 			m_length_poly_count(1), m_dx(other.m_width), m_dz(other.m_depth)
 		{}
 
+		~Rectangle() 
+		{
+			for (auto AABB : CBlist) {
+				delete AABB;
+			}
+		}
+
 		shape& resolution(int val) override
 		{
 			m_length_poly_count = val;
@@ -79,11 +86,29 @@ namespace engine
 			return (*this);
 		}
 
+		WorldObject& createCollisionBox(float x, float y, float z) override
+		{
+			auto* AABB = new CollisionBox;
+
+			AABB->x1 = x - m_width / 2;
+			AABB->x2 = AABB->x1 + m_width;
+
+			AABB->y1 = y;
+			AABB->y2 = y;
+
+			AABB->z1 = z - m_depth / 2;
+			AABB->z2 = AABB->z1 + m_depth;
+
+			CBlist.push_back(AABB);
+
+			return (*this);
+		}
+
 	private:
 		int m_length_poly_count;
 		float m_dx;
 		float m_dz;
 		float m_width;
-		float m_depth;
+		float m_depth; 
 	};
 }
