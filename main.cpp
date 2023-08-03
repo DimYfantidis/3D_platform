@@ -24,21 +24,9 @@
 #include "display_lists.h"
 #include "globals.h"
 #include "ControllerInterface.h"
-
-
-//#include "callbacks.h"
+#include "FileManager.h"
 #include "menu.h"
 
-
-void initDirectories(void)
-{
-	WCHAR buffer[MAX_PATH] = { 0 };
-	GetModuleFileName(NULL, buffer, MAX_PATH);
-	std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
-
-	workingDir = std::wstring(buffer).substr(0, pos);
-	mainThemeFile = workingDir + L"\\Music\\lake_wind_ambience.wav";
-}
 
 int main(int argc, char* argv[])
 {
@@ -50,8 +38,6 @@ int main(int argc, char* argv[])
 	glutCreateWindow("3D Platformer");
 
 	ScreenLogger::getInstance().setDimensions(windowWidth, windowHeight);
-
-	initDirectories();
 	
 	if (FULLSCREEN)
 		glutFullScreen();
@@ -106,7 +92,11 @@ int main(int argc, char* argv[])
 	glutPassiveMotionFunc(ControllerInterface::passiveMotion);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
-	PlaySound(mainThemeFile.data(), nullptr, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
+	PlaySound(
+		FileManager::getInstance().mainAmbienceTheme().data(), 
+		nullptr, 
+		SND_ASYNC | SND_NODEFAULT | SND_LOOP
+	);
 	glutMainLoop();
 
 	return EXIT_SUCCESS;

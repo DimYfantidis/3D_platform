@@ -9,7 +9,11 @@ void window_menu(int op_id)
 		if (sound_on)
 			PlaySound(nullptr, nullptr, 0);
 		else
-			PlaySound(mainThemeFile.data(), nullptr, SND_ASYNC | SND_NODEFAULT | SND_LOOP);
+			PlaySound(
+				FileManager::getInstance().mainAmbienceTheme().data(), 
+				nullptr, 
+				SND_ASYNC | SND_NODEFAULT | SND_LOOP
+			);
 		sound_on = !sound_on;
 		break;
 	case 2:

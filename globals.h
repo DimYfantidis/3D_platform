@@ -3,10 +3,6 @@
 #include <string>
 
 
-// Files and Directories
-std::wstring workingDir;
-std::wstring mainThemeFile;
-
 // Window's dimension and info.
 bool FULLSCREEN = true;
 int windowWidth = (FULLSCREEN ? 2560 : 1000);
