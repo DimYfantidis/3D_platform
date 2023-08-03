@@ -5,26 +5,26 @@
 
 namespace engine
 {
-	class Sphere : public shape
+	class Sphere : public Shape
 	{
 	public:
 		Sphere(float radius)
-			: shape(), m_radius(radius), m_rec_depth(4)
+			: Shape(), m_radius(radius), m_rec_depth(4)
 		{}
 
 		Sphere(const Sphere& other)
-			: shape(other), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
+			: Shape(other), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
 		Sphere(Sphere&& other)
-			: shape(std::move(other)), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
+			: Shape(std::move(other)), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
 
-		shape& resolution(int val) override {
+		Shape& resolution(int val) override {
 			m_rec_depth = val;
 			return (*this);
 		}
 
-		shape& spawn(float x, float y, float z) override
+		Shape& spawn(float x, float y, float z) override
 		{
 			if constexpr (LOG_SHAPES)
 				logger.logMessage(

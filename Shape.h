@@ -20,14 +20,14 @@ namespace engine
 	*		- Sphere (3D)
 	*	Methods return shape& for chaining reasons.
 	*/
-	class shape : public WorldObject
+	class Shape : public WorldObject
 	{
 	public:
-		shape()
+		Shape()
 			: WorldObject(), m_color{1.0f, 1.0f, 1.0f}, m_ambient(), m_specular(), m_diffuse(), m_shininess(0.0f)
 		{}
 
-		shape(const shape& other) : WorldObject(other), m_shininess(other.m_shininess)
+		Shape(const Shape& other) : WorldObject(other), m_shininess(other.m_shininess)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
 			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
@@ -35,7 +35,7 @@ namespace engine
 			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
 		}
 
-		shape(shape&& other) : WorldObject(std::move(other)), m_shininess(other.m_shininess)
+		Shape(Shape&& other) : WorldObject(std::move(other)), m_shininess(other.m_shininess)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
 			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));
@@ -46,10 +46,10 @@ namespace engine
 
 		// Spawns the object with its center at the given point.
 		// Implementation is done by the derived classes.
-		virtual shape& spawn(float x, float y, float z) { return (*this); }
-		shape& spawn(const point3f p) { return spawn(p[0], p[1], p[2]); }
+		virtual Shape& spawn(float x, float y, float z) { return (*this); }
+		Shape& spawn(const point3f p) { return spawn(p[0], p[1], p[2]); }
 
-		shape& color(float red, float green, float blue)
+		Shape& color(float red, float green, float blue)
 		{
 			m_color[0] = red;
 			m_color[1] = green;
@@ -57,7 +57,7 @@ namespace engine
 			return (*this);
 		}
 
-		shape& colorv(const vector3f RGB)
+		Shape& colorv(const vector3f RGB)
 		{
 			m_color[0] = RGB[0];
 			m_color[1] = RGB[1];
@@ -65,14 +65,14 @@ namespace engine
 			return (*this);
 		}
 
-		shape& shininess(float val) {
+		Shape& shininess(float val) {
 			m_shininess = val;
 			return (*this);
 		}
 
 		// Sets the material properties.
 		// Acceptanle values for pname are GL_AMBIENT, GL_SPECULAR and GL_DIFFUSE. */
-		shape& materialv(GLenum pname, const vector4f params)
+		Shape& materialv(GLenum pname, const vector4f params)
 		{
 			float* light_type;
 
@@ -92,11 +92,11 @@ namespace engine
 			return (*this);
 		}
 
-		shape& materialv(GLenum pname, const std::array<float, 4>& params) {
+		Shape& materialv(GLenum pname, const std::array<float, 4>& params) {
 			return materialv(pname, params.data());
 		}
 
-		shape& Material(const materials::Material& blueprint)
+		Shape& Material(const materials::Material& blueprint)
 		{
 			m_shininess = blueprint.shininess;
 			memmove(m_ambient, blueprint.ambient, sizeof(vector4f));
@@ -105,7 +105,7 @@ namespace engine
 			return (*this);
 		}
 
-		virtual shape& resolution(int val) { return (*this); }
+		virtual Shape& resolution(int val) { return (*this); }
 
 		// Getters
 		const float* color() { return m_color; }

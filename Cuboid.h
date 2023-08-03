@@ -6,26 +6,26 @@
 namespace engine
 {
 	// The 3D version of a rectangle.
-	class Cuboid : public shape
+	class Cuboid : public Shape
 	{
 	public:
 		Cuboid(float width, float height, float depth)
-			: shape(), m_width(width), m_height(height), m_depth(depth),
+			: Shape(), m_width(width), m_height(height), m_depth(depth),
 			m_length_poly_count(1), m_dx(width), m_dy(height), m_dz(depth)
 		{}
 
 		Cuboid(const Cuboid& other)
-			: shape(other), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
+			: Shape(other), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
 			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
 
 		Cuboid(Cuboid&& other)
-			: shape(std::move(other)), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
+			: Shape(std::move(other)), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
 			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
 
 
-		shape& resolution(int val) override
+		Shape& resolution(int val) override
 		{
 			m_length_poly_count = val;
 			m_dx = m_width / m_length_poly_count;
@@ -34,7 +34,7 @@ namespace engine
 			return (*this);
 		}
 
-		shape& spawn(float x, float y, float z) override
+		Shape& spawn(float x, float y, float z) override
 		{
 			x -= m_width / 2;
 			y -= m_height / 2;

@@ -19,14 +19,6 @@
 #include "globals.h"
 
 
-// Examplary objects.
-engine::Rectangle ground(100.0f, 100.0f);
-engine::Cuboid cuboid_object(8.0f, 8.0f, 8.0f);
-engine::Sphere sphere_object(10.0f);
-engine::Sphere ball(0.5f);
-
-engine::LightSource lamp(GL_LIGHT0);
-
 class ControllerInterface
 {
 private:
@@ -36,7 +28,15 @@ private:
 
 	inline static bool keystates[UCHAR_MAX + 1] = { false };
 
-	inline static double deltaTime;
+	inline static double deltaTime = 0.0;
+
+	// Examplary objects.
+	inline static engine::Rectangle ground = engine::Rectangle(100.0f, 100.0f);
+	inline static engine::Cuboid cuboid_object = engine::Cuboid(8.0f, 8.0f, 8.0f);
+	inline static engine::Sphere sphere_object = engine::Sphere(10.0f);
+	inline static engine::Sphere ball = engine::Sphere(0.5f);
+
+	inline static engine::LightSource lamp = engine::LightSource(GL_LIGHT0);
 
 public:
 	ControllerInterface() = delete;

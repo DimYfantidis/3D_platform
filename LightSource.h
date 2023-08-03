@@ -100,7 +100,7 @@ namespace engine
 		vector4f m_diffuse;
 
 		GLenum m_light_id;
-		shape* m_cell;
+		Shape* m_cell;
 
 		inline static ScreenLogger& logger = ScreenLogger::getInstance();
 	};

@@ -47,10 +47,11 @@ namespace engine
 				bb->z1 = (float)cam_pos[2] - 0.5f;
 				bb->z2 = (float)cam_pos[2] + 0.5f;
 
-				ScreenLogger::getInstance().logMessage(
-					"AABB: from {%.3lf, %.3lf, %.3lf} to {%.3lf, %.3lf, %.3lf}",
-					bb->x1, bb->y1, bb->z1, bb->x2, bb->y2, bb->z2
-				);
+				if constexpr (LOG_COLLISIONS)
+					ScreenLogger::getInstance().logMessage(
+						"AABB: from (%.3lf, %.3lf, %.3lf) to (%.3lf, %.3lf, %.3lf)",
+						bb->x1, bb->y1, bb->z1, bb->x2, bb->y2, bb->z2
+					);
 			}
 			
 			return (*this);

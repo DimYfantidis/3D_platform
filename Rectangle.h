@@ -6,20 +6,20 @@
 namespace engine 
 {
 	// Rectangles have width (x) and depth (z) but no height (y_top = y_bottom)
-	class Rectangle : public shape
+	class Rectangle : public Shape
 	{
 	public:
 		Rectangle(float width, float depth)
-			: shape(), m_width(width), m_depth(depth),
+			: Shape(), m_width(width), m_depth(depth),
 			m_length_poly_count(1), m_dx(width), m_dz(depth)
 		{}
 
 		Rectangle(const Rectangle& other)
-			: shape(other), m_width(other.m_width), m_depth(other.m_depth),
+			: Shape(other), m_width(other.m_width), m_depth(other.m_depth),
 			m_length_poly_count(1), m_dx(other.m_width), m_dz(other.m_depth)
 		{}
 
-		shape& resolution(int val) override
+		Shape& resolution(int val) override
 		{
 			m_length_poly_count = val;
 			m_dx = m_width / m_length_poly_count;
@@ -27,7 +27,7 @@ namespace engine
 			return (*this);
 		}
 
-		shape& spawn(float x, float y, float z) override
+		Shape& spawn(float x, float y, float z) override
 		{
 			x -= m_width / 2;
 			z -= m_depth / 2;
