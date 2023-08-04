@@ -20,6 +20,8 @@ public:
 
 	const std::wstring& mainAmbienceTheme() const { return m_main_ambience_theme; }
 
+
+
 private:
 	FileManager()
 	{
@@ -37,7 +39,12 @@ private:
 		m_main_ambience_theme = m_music_directory + L"\\lake_wind_ambience.wav";
 	}
 
+public:
+	FileManager(const FileManager&) = delete;
+
 	~FileManager() = default;
+
+	FileManager& operator = (const FileManager&) = delete;
 
 private:
 	std::wstring m_working_directory;

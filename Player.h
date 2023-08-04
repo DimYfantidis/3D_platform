@@ -57,7 +57,6 @@ namespace engine
 			return (*this);
 		}
 
-
 	private:
 		Player() : 
 			WorldObject(),
@@ -67,6 +66,13 @@ namespace engine
 			torso_dir{ 0.0, 0.0, -1.0 }, 
 			left_dir{ -1.0, 0.0, 0.0 }
 		{}
+
+	public:
+		Player(const Player&) = delete;
+
+		~Player() = default;
+
+		Player& operator = (const Player&) = delete;
 
 	public:
 		double move_speed;

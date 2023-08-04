@@ -102,7 +102,12 @@ private:
 		: m_width(), m_height(), m_info_buffer(), m_warning_buffer(), m_line(), m_fps()
 	{}
 
+public:
+	ScreenLogger(const ScreenLogger&) = delete;
+
 	~ScreenLogger() = default;
+
+	ScreenLogger& operator = (const ScreenLogger&) = delete;
 
 private:
 	int m_width;
