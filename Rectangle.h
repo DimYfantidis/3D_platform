@@ -16,7 +16,12 @@ namespace engine
 
 		Rectangle(const Rectangle& other)
 			: Shape(other), m_width(other.m_width), m_depth(other.m_depth),
-			m_length_poly_count(1), m_dx(other.m_width), m_dz(other.m_depth)
+			m_length_poly_count(other.m_length_poly_count), m_dx(other.m_width), m_dz(other.m_depth)
+		{}
+
+		Rectangle(Rectangle&& other) noexcept
+			: Shape(std::move(other)), m_width(other.m_width), m_depth(other.m_depth),
+			m_length_poly_count(other.m_length_poly_count), m_dx(other.m_width), m_dz(other.m_depth)
 		{}
 
 		Shape& resolution(int val) override

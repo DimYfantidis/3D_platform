@@ -19,9 +19,9 @@ namespace engine
 			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
 
-		Cuboid(Cuboid&& other)
+		Cuboid(Cuboid&& other) noexcept
 			: Shape(std::move(other)), m_width(other.m_width), m_height(other.m_height), m_depth(other.m_depth),
-			m_length_poly_count(1), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
+			m_length_poly_count(other.m_length_poly_count), m_dx(other.m_width), m_dy(other.m_height), m_dz(other.m_depth)
 		{}
 
 

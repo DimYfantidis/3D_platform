@@ -35,7 +35,7 @@ namespace engine
 			memmove(this->m_diffuse, other.m_diffuse, sizeof(vector4f));
 		}
 
-		Shape(Shape&& other) : WorldObject(std::move(other)), m_shininess(other.m_shininess)
+		Shape(Shape&& other) noexcept : WorldObject(std::move(other)), m_shininess(other.m_shininess)
 		{
 			memmove(this->m_color, other.m_color, sizeof(vector3f));
 			memmove(this->m_ambient, other.m_ambient, sizeof(vector4f));

@@ -15,7 +15,7 @@ namespace engine
 		Sphere(const Sphere& other)
 			: Shape(other), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
-		Sphere(Sphere&& other)
+		Sphere(Sphere&& other) noexcept
 			: Shape(std::move(other)), m_radius(other.m_radius), m_rec_depth(other.m_rec_depth)
 		{}
 
