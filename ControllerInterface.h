@@ -52,15 +52,15 @@ public:
 
 		cuboid_object
 			.resolution(10)
-			.Material(materials::jade)
+			.material(materials::jade)
 			.createCollisionBox(20.0f, 20.0f, 20.0f)
 			.createCollisionBox(-20.0f, 20.0f, -20.0f);;
 
 		sphere_object
 			.resolution(6)
-			.Material(materials::pearl);
+			.material(materials::pearl);
 
-		ball.Material(materials::pearl);
+		ball.material(materials::pearl);
 
 		player.createCollisionBox(0.0f, 0.0f, 0.0f);
 	}

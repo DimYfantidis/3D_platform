@@ -96,7 +96,7 @@ namespace engine
 			return materialv(pname, params.data());
 		}
 
-		Shape& Material(const materials::Material& blueprint)
+		Shape& material(const materials::Material& blueprint)
 		{
 			m_shininess = blueprint.shininess;
 			memmove(m_ambient, blueprint.ambient, sizeof(vector4f));
