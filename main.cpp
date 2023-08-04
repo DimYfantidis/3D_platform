@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	glutCreateWindow("3D Platformer");
 
 	ScreenLogger::getInstance().setDimensions(windowWidth, windowHeight);
-	
+
 	if (FULLSCREEN)
 		glutFullScreen();
 
@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
 	glPointSize(0.3f);
 
 	glColor3f(1.0f, 1.0f, 1.0f);
+
 	// Pre-compiled lists initialization
 	initDisplayLists();
 

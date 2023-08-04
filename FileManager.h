@@ -26,15 +26,18 @@ private:
 		// The (absolute) path of the executable
 		WCHAR buffer[MAX_PATH] = { 0 };
 		GetModuleFileName(NULL, buffer, MAX_PATH);
-		std::wstring::size_type pos = std::wstring(buffer).find_last_of(L"\\/");
-		m_working_directory = std::wstring(buffer).substr(0, pos);
+		std::wstring buffer_wstring(buffer);
+		std::wstring::size_type pos = buffer_wstring.find_last_of(L"\\/");
+		m_working_directory = buffer_wstring.substr(0, pos);
 
 		// The (absolute) path of the music files
 		m_music_directory = m_working_directory + L"\\Music";
 
 		// The file of the main ambience theme
-		m_main_ambience_theme = m_working_directory + L"\\Music\\lake_wind_ambience.wav";
+		m_main_ambience_theme = m_music_directory + L"\\lake_wind_ambience.wav";
 	}
+
+	~FileManager() = default;
 
 private:
 	std::wstring m_working_directory;

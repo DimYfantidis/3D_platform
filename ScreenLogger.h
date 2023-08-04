@@ -102,6 +102,8 @@ private:
 		: m_width(), m_height(), m_info_buffer(), m_warning_buffer(), m_line(), m_fps()
 	{}
 
+	~ScreenLogger() = default;
+
 private:
 	int m_width;
 	int m_height;

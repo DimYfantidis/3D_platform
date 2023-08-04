@@ -22,7 +22,7 @@ namespace engine
 			}
 		}
 
-		WorldObject(WorldObject&& other): CBlist(std::move(other.CBlist)) {}
+		WorldObject(WorldObject&& other) noexcept : CBlist(std::move(other.CBlist)) {}
 
 		~WorldObject()
 		{
