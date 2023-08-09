@@ -20,8 +20,6 @@ public:
 
 	const std::wstring& mainAmbienceTheme() const { return m_main_ambience_theme; }
 
-
-
 private:
 	FileManager()
 	{

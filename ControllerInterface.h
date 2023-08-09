@@ -12,6 +12,7 @@
 #include "Shape.h"
 #include "Sphere.h"
 #include "Rectangle.h"
+#include "FileManager.h"
 #include "Cuboid.h"
 #include "LightSource.h"
 #include "ScreenLogger.h"
@@ -26,7 +27,9 @@ private:
 
 	inline static engine::Player& player = engine::Player::getInstance();
 
-	inline static bool keystates[UCHAR_MAX + 1] = { false };
+	inline static const FileManager& fileManager = FileManager::getInstance();
+
+	inline static bool keystates[UCHAR_MAX+1] = {false};
 
 	inline static double deltaTime = 0.0;
 
@@ -54,7 +57,7 @@ public:
 			.resolution(10)
 			.material(materials::jade)
 			.createCollisionBox(20.0f, 20.0f, 20.0f)
-			.createCollisionBox(-20.0f, 20.0f, -20.0f);;
+			.createCollisionBox(-20.0f, 20.0f, -20.0f);
 
 		sphere_object
 			.resolution(6)
