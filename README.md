@@ -34,4 +34,6 @@
 <hr>
 
 ## **Sources**:
-* https://learnopengl.com/
+* Learn OpenGL: (https://learnopengl.com/)
+* Game Physics Engine by Ian Millington: (https://tinyurl.com/2js9rsb7)
+* Book of Shaders: (https://thebookofshaders.com/)
