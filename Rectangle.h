@@ -84,7 +84,7 @@ namespace engine
 			return (*this);
 		}
 
-		WorldObject& createCollisionBox(float x, float y, float z) override
+		void createCollisionBox(float x, float y, float z) override
 		{
 			auto* AABB = new CollisionBox;
 
@@ -98,8 +98,6 @@ namespace engine
 			AABB->z2 = AABB->z1 + m_depth;
 
 			CBlist.push_back(AABB);
-
-			return (*this);
 		}
 
 	private:

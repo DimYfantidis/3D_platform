@@ -9,6 +9,30 @@ namespace engine
 {
 	class Player : public WorldObject
 	{
+	private:
+		Player() :
+			WorldObject(),
+			move_speed(20.0),
+			cam_dir{ 0.0, 0.0, -1.0 },
+			cam_pos{ 0.0, 1.7, 0.0 },
+			torso_dir{ 0.0, 0.0, -1.0 },
+			left_dir{ -1.0, 0.0, 0.0 }
+		{}
+
+	public:
+		Player(const Player&) = delete;
+
+		~Player() = default;
+
+		Player& operator = (const Player&) = delete;
+
+	public:
+		double move_speed;
+		volatile vector3d cam_dir;
+		volatile vector3d cam_pos;
+		volatile vector3d torso_dir;
+		volatile vector3d left_dir;
+
 	public:
 		static Player& getInstance() 
 		{
@@ -16,7 +40,7 @@ namespace engine
 			return instance;
 		}
 
-		WorldObject& createCollisionBox(float x, float y, float z) override
+		void createCollisionBox(float x, float y, float z) override
 		{
 			auto* AABB = new CollisionBox;
 
@@ -30,11 +54,9 @@ namespace engine
 			AABB->z2 = +0.5f;
 
 			CBlist.push_back(AABB);
-
-			return (*this);
 		}
 
-		Player& updateCollisionBox()
+		void updateCollisionBox()
 		{
 			for (auto bb : CBlist) 
 			{
@@ -53,33 +75,6 @@ namespace engine
 						bb->x1, bb->y1, bb->z1, bb->x2, bb->y2, bb->z2
 					);
 			}
-			
-			return (*this);
 		}
-
-	private:
-		Player() : 
-			WorldObject(),
-			move_speed(20.0), 
-			cam_dir{ 0.0, 0.0, -1.0 }, 
-			cam_pos{ 0.0, 1.7, 0.0 }, 
-			torso_dir{ 0.0, 0.0, -1.0 }, 
-			left_dir{ -1.0, 0.0, 0.0 }
-		{}
-
-	public:
-		Player(const Player&) = delete;
-
-		~Player() = default;
-
-		Player& operator = (const Player&) = delete;
-
-	public:
-		double move_speed;
-
-		volatile vector3d cam_dir;
-		volatile vector3d cam_pos;
-		volatile vector3d torso_dir;
-		volatile vector3d left_dir;
 	};
 }

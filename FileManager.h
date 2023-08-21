@@ -7,6 +7,13 @@
 
 class FileManager
 {
+private:
+	std::wstring m_working_directory;
+
+	std::wstring m_music_directory;
+
+	std::wstring m_main_ambience_theme;
+
 public:
 	static const FileManager& getInstance()
 	{
@@ -19,6 +26,13 @@ public:
 	const std::wstring& musicDirectory() const { return m_music_directory; }
 
 	const std::wstring& mainAmbienceTheme() const { return m_main_ambience_theme; }
+
+public:
+	FileManager(const FileManager&) = delete;
+
+	~FileManager() = default;
+
+	FileManager& operator = (const FileManager&) = delete;
 
 private:
 	FileManager()
@@ -36,18 +50,4 @@ private:
 		// The file of the main ambience theme
 		m_main_ambience_theme = m_music_directory + L"\\lake_wind_ambience.wav";
 	}
-
-public:
-	FileManager(const FileManager&) = delete;
-
-	~FileManager() = default;
-
-	FileManager& operator = (const FileManager&) = delete;
-
-private:
-	std::wstring m_working_directory;
-
-	std::wstring m_music_directory;
-
-	std::wstring m_main_ambience_theme;
 };

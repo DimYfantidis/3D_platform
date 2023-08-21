@@ -55,9 +55,9 @@ public:
 
 		cuboid_object
 			.resolution(10)
-			.material(materials::jade)
-			.createCollisionBox(20.0f, 20.0f, 20.0f)
-			.createCollisionBox(-20.0f, 20.0f, -20.0f);
+			.material(materials::jade);
+		cuboid_object.createCollisionBox(20.0f, 20.0f, 20.0f);
+		cuboid_object.createCollisionBox(-20.0f, 20.0f, -20.0f);
 
 		sphere_object
 			.resolution(6)

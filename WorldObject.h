@@ -97,14 +97,13 @@ namespace engine
 			}
 		};
 
-		virtual WorldObject& createCollisionBox(float x, float y, float z) { return (*this); }
+		virtual void createCollisionBox(float x, float y, float z) { }
 
-		virtual WorldObject& showCollisionBox() 
+		virtual void showCollisionBox() 
 		{
 			for (auto bb : CBlist) {
 				bb->draw();
 			}
-			return (*this);
 		}
 
 		const std::vector<CollisionBox*>& getCollisionList() const { return CBlist; }
