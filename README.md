@@ -3,7 +3,9 @@
 
 ![screenshot](https://github.com/DimYfantidis/3D_platform/assets/72493069/24ace5fa-2c46-450e-86be-5562a3a67ed2)
 
-**TODO**:
+<hr>
+
+## **TODO**:
 * Create Camera inside an invisible cube
     1. Create invisible body
     2. ~~Create Spherical camera~~
@@ -28,3 +30,8 @@
 * Insert Music
     1. ~~Ambient music~~
     2. SFX
+
+<hr>
+
+## **Sources**:
+* https://learnopengl.com/

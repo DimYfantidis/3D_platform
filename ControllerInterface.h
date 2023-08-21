@@ -44,6 +44,8 @@ private:
 public:
 	ControllerInterface() = delete;
 
+	ControllerInterface(const ControllerInterface&) = delete;
+
 	static void initializeWorld()
 	{
 		ground
