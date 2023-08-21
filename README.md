@@ -16,6 +16,9 @@
     3. Create shadows
 * Create Gravity
 * Create Collision
+    1. Collision Detection
+    2. Collision Resolution
+    3. Read Physics books (in sources section, below)
 * ~~Create FOV~~
 * Create Movement  
     1. ~~Forward and Back~~
