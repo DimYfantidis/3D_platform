@@ -85,14 +85,15 @@ int main(int argc, char* argv[])
 	ControllerInterface::initializeWorld();
 
 	// ----------- CALLBACK FUNCTIONS (BEGIN) ----------- //
-	glutDisplayFunc(ControllerInterface::display);
-	glutKeyboardFunc(ControllerInterface::keyboardDown);
-	glutKeyboardUpFunc(ControllerInterface::keyboardUp);
-	glutPassiveMotionFunc(ControllerInterface::passiveMotion);
+	glutDisplayFunc(ControllerInterface::Callback::display);
+	glutKeyboardFunc(ControllerInterface::Callback::keyboardDown);
+	glutKeyboardUpFunc(ControllerInterface::Callback::keyboardUp);
+	glutPassiveMotionFunc(ControllerInterface::Callback::passiveMotion);
 	glutSpecialFunc(nullptr);
 	glutIdleFunc(nullptr);
 	// ----------- CALLBACK FUNCTIONS (END) ----------- //
 
+	
 	PlaySound(
 		FileManager::getInstance().mainAmbienceTheme().data(), 
 		nullptr, 
