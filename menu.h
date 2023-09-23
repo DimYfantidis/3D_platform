@@ -10,7 +10,7 @@ void window_menu(int op_id)
 			PlaySound(nullptr, nullptr, 0);
 		else
 			PlaySound(
-				FileManager::getInstance().mainAmbienceTheme().data(), 
+				FileManager::getInstance().mainAmbienceTheme().c_str(), 
 				nullptr, 
 				SND_ASYNC | SND_NODEFAULT | SND_LOOP
 			);

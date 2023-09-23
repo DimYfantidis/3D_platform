@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
 	
 	PlaySound(
-		FileManager::getInstance().mainAmbienceTheme().data(), 
+		FileManager::getInstance().mainAmbienceTheme().c_str(), 
 		nullptr, 
 		SND_ASYNC | SND_NODEFAULT | SND_LOOP
 	);
