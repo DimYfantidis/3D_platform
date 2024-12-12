@@ -1,4 +1,4 @@
-# 3D Platformer Game - Parkour
+# 3D Platformer Game
 Created by [XG-PRO](https://github.com/XG-PRO) and [DimYfantidis](https://github.com/DimYfantidis)
 
 ![screenshot](https://github.com/DimYfantidis/3D_platform/assets/72493069/24ace5fa-2c46-450e-86be-5562a3a67ed2)
